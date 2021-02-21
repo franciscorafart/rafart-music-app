@@ -51,8 +51,7 @@ const InstrumentComponent = ({
 }) => {
     const [position, setPosition] = useState({top: startPosition.top, left: startPosition.left});
 
-    const onDrag = e => {
-        // console.log('e', e)
+    const onDragOrDrop = e => {
         setPosition(
             inContainer(
                 {left: Number(e.clientX), top: Number(e.clientY)}, 
@@ -63,21 +62,10 @@ const InstrumentComponent = ({
         )
     }
 
-    const onDrop = e => {
-        setPosition(
-            inContainer(
-                {left: Number(e.clientX), top: Number(e.clientY)}, 
-                height,
-                width,
-                limits,
-            )
-        )
-    }
     return(
         <Instrument 
-            onClick={() => console.log('click')} 
-            onDrag={onDrag} 
-            onDragEnd={onDrop}
+            onDrag={onDragOrDrop} 
+            onDragEnd={onDragOrDrop}
             position={position}
             height={height}
             width={width}
