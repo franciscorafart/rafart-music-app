@@ -32,17 +32,18 @@ const addAudioBuffer = async (audioCtx, filepath) => {
 }
 
 const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
-    // const oscillatorGainNode = audioCtx.createGain()
-    // oscillatorGainNode.gain.setValueAtTime(0, Audio.context.currentTime)
-    // oscillatorGainNode.connect(Audio.masterGainNode)
+    const stemGainNode = audioCtx.createGain();
+    stemGainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+    stemGainNode.connect(masterGainNode);
 
-    const audioSource = audioCtx.createBufferSource();
-    audioSource.buffer = buffer;
+    const stemAudioSource = audioCtx.createBufferSource();
+    stemAudioSource.buffer = buffer;
 
-    // TODO: This should be the master gain node
-    audioSource.connect(audioCtx.destination) // or destination
-    audioSource.start(time);
-    return audioSource;
+    stemAudioSource.connect(stemGainNode);
+    stemAudioSource.start(time);
+
+    // TODO: return gain and panning controls so that the UI can manipulate them
+    return stemAudioSource;
 }
 
 const AlienationDance = () => {
@@ -61,7 +62,7 @@ const AlienationDance = () => {
 
     const initializeMasterGain = () => {
         Audio.masterGainNode.connect(Audio.context.destination);
-        Audio.masterGainNode.gain.setValueAtTime(0, Audio.context.currentTime);
+        Audio.masterGainNode.gain.setValueAtTime(1, Audio.context.currentTime);
     }
 
     useEffect(() => {
@@ -75,7 +76,9 @@ const AlienationDance = () => {
             playBuffer(Audio.context, Audio.masterGainNode, audioBuffer, 0);
         }
     }
-    console.log('audioBuffer state', audioBuffers)
+
+    console.log('audioBuffers', audioBuffers)
+
     return(
         <div>
             <MixerContainer height={height} width={width}>
