@@ -42,25 +42,49 @@ const inContainer = (
         top: vertical,
     }
 }
+
+const positionToPanGainTuple = (position, width, height, limits) => {
+    
+    const mixerWidth = limits.rightLimit - limits.leftLimit;
+    const mixerHeight = limits.bottomLimit - limits.topLimit;
+    console.log('position', position, 'mixerWidth', mixerWidth, 'mixerHeight', mixerHeight)
+    const pan = (((position.left - limits.leftLimit - (width/2)) / mixerWidth) * 2) - 1;
+    const gain = (((position.top - limits.topLimit - (height/2)) / mixerHeight) * -1) + 1;
+
+    return [pan, gain]
+}
+
 const InstrumentComponent = ({
     name, 
     startPosition, 
     height, 
     width,
     limits,
+    panControl,
+    gainControl,
 }) => {
     const [position, setPosition] = useState({top: startPosition.top, left: startPosition.left});
+    const [pan, setPan] = useState(0);
+    const [gain, setGain] = useState(0.5); // Starting position really
 
     const onDragOrDrop = e => {
-        setPosition(
-            inContainer(
-                {left: Number(e.clientX), top: Number(e.clientY)}, 
-                height,
-                width,
-                limits,
-            )
-        )
+        const positionInContainer = inContainer(
+            {left: Number(e.clientX), top: Number(e.clientY)}, 
+            height,
+            width,
+            limits,
+        );
+
+        setPosition(positionInContainer);
+        
+        const [pan, gain] = positionToPanGainTuple(positionInContainer, width, height, limits);
+        // TODO: update panControl and gainControl with the current state. No need for state
+        setPan(pan);
+        setGain(gain);
     }
+
+    console.log('pan', pan, 'gain', gain);
+    
 
     return(
         <Instrument 

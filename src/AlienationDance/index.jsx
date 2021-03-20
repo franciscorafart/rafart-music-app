@@ -32,18 +32,51 @@ const addAudioBuffer = async (audioCtx, filepath) => {
 }
 
 const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
-    const stemGainNode = audioCtx.createGain();
-    stemGainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-    stemGainNode.connect(masterGainNode);
-
     const stemAudioSource = audioCtx.createBufferSource();
     stemAudioSource.buffer = buffer;
 
-    stemAudioSource.connect(stemGainNode);
+    const panNode = audioCtx.createStereoPanner();
+    panNode.pan.setValueAtTime(0, audioCtx.currentTime);
+
+    const stemGainNode = audioCtx.createGain();
+    stemGainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+
+    // Singal chain
+    stemAudioSource.connect(panNode);
+    panNode.connect(stemGainNode);
+    stemGainNode.connect(masterGainNode);
+
     stemAudioSource.start(time);
 
     // TODO: return gain and panning controls so that the UI can manipulate them
-    return stemAudioSource;
+    return [panNode, stemGainNode];
+}
+
+const initialInstrumentsState = {
+    stick: {
+        name: 'The Stick',
+        startPosition: {left: 100, top: 100},
+        panNode: {},
+        gainNode: {},
+    },
+    drums: {
+        name: 'Drums',
+        startPosition: {left: 200, top: 100},
+        panNode: {},
+        gainNode: {},
+    },
+    synths: {
+        name: 'Synth',
+        startPosition: {left: 300, top: 100},
+        panNode: {},
+        gainNode: {},
+    },
+    guitar: {
+        name: 'Guitar',
+        startPosition: {left: 400, top: 100},
+        panNode: {},
+        gainNode: {},
+    },
 }
 
 const AlienationDance = () => {
@@ -59,6 +92,7 @@ const AlienationDance = () => {
 
     // Audio
     const [audioBuffers, setAudioBuffers] = useState([]);
+    const [instruments, setInstruments] = useState(initialInstrumentsState);
 
     const initializeMasterGain = () => {
         Audio.masterGainNode.connect(Audio.context.destination);
@@ -68,12 +102,22 @@ const AlienationDance = () => {
     useEffect(() => {
         initializeMasterGain();
 
-        addAudioBuffer(Audio.context, file).then((tempBuffer => setAudioBuffers([tempBuffer])));
+        // TODO: Somehow load file based on instrument and add them all
+        addAudioBuffer(Audio.context, file).then((tempBuffer => setAudioBuffers([...audioBuffers, tempBuffer])));
     }, []);
 
     const playAll = () => {
         for (const audioBuffer of audioBuffers){
-            playBuffer(Audio.context, Audio.masterGainNode, audioBuffer, 0);
+            const [panNode, gainNode] = playBuffer(Audio.context, Audio.masterGainNode, audioBuffer, 0);
+            // TODO: This is wrong, each instrument should have a file reference that's loaded and asign here
+            setInstruments({
+                ...instruments,
+                stick: {
+                    ...instruments.stick,
+                    panNode: panNode,
+                    gainNode: gainNode,
+                }
+            })
         }
     }
 
@@ -82,10 +126,22 @@ const AlienationDance = () => {
     return(
         <div>
             <MixerContainer height={height} width={width}>
-                <InstrumentComponent name='The Stick' startPosition={{left: 100, top: 100}} height={50} width={50} limits={limits}/>
+                {Object.entries(instruments).map(([key, instrument]) => 
+                    <InstrumentComponent
+                        key={key}
+                        name={instrument.name}
+                        startPosition={instrument.startPosition}
+                        height={50} 
+                        width={50} 
+                        limits={limits}
+                        panControl={instrument.panControl}
+                        gainControl={instrument.gainControl}
+                    />
+                )}
+                {/* <InstrumentComponent name='The Stick' startPosition={{left: 100, top: 100}} height={50} width={50} limits={limits}/>
                 <InstrumentComponent name='Drums' startPosition={{left: 200, top: 100}} height={50} width={50} limits={limits}/>
                 <InstrumentComponent name='Synths' startPosition={{left: 300, top: 100}} height={50} width={50} limits={limits}/>
-                <InstrumentComponent name='Guitar' startPosition={{left: 400, top: 100}} height={50} width={50} limits={limits}/>
+                <InstrumentComponent name='Guitar' startPosition={{left: 400, top: 100}} height={50} width={50} limits={limits}/> */}
             </MixerContainer>
             <buton onClick={() => playAll()}>Play!</buton>
         </div>
