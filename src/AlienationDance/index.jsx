@@ -7,10 +7,10 @@ import styled from 'styled-components';
 import file from 'assets/jarmasti.mp3'
 
 const MixerContainer = styled.div`
-    margin: 30px 30px 30px 30px;
-    width: ${props => `${props.width - 60}px`};
-    height: ${props => `${props.height - 60}px`};
-    border: 1px solid gray;
+    margin: ${props => props.mixerPad}px 0 0 ${props => props.mixerPad}px;
+    width: ${props => `${props.width}px`};
+    height: ${props => `${props.height}px`};
+    border: 1px solid black;
 `;
 
 const getFile = async (audioCtx, filepath) => {
@@ -81,13 +81,18 @@ const initialInstrumentsState = {
 
 const AlienationDance = () => {
     const windowSize = useWindowSize();
-    const {width, height} = windowSize;
+    const {width, _} = windowSize;
+    const mixerPad = 30;
+
+    const mixerWidth = width - (mixerPad*2);
+    const mixerHeight = (360/640) * mixerWidth;
+    const instrumentSize = 50;
 
     const limits = {
-        rightLimit: width - 30,
-        leftLimit: 30,
-        topLimit: 30,
-        bottomLimit: height - 30,
+        rightLimit: width - mixerPad,
+        leftLimit: mixerPad,
+        topLimit: mixerPad,
+        bottomLimit: mixerHeight + mixerPad,
     }
 
     // Audio
@@ -119,13 +124,15 @@ const AlienationDance = () => {
                 }
             })
         }
+
+        // TODO: Add video playback control here
     }
     // TODO: Enable play only when buffers are loaded
     console.log('audioBuffers', audioBuffers)
 
     return(
         <div>
-            <MixerContainer height={height} width={width}>
+            <MixerContainer height={mixerHeight} width={mixerWidth} mixerPad={mixerPad}>
                 {Object.entries(instruments).map(([key, instrument]) => 
                     <InstrumentComponent
                         key={key}
@@ -139,6 +146,13 @@ const AlienationDance = () => {
                         audioContext={Audio.context}
                     />
                 )}
+                <iframe 
+                    src="https://player.vimeo.com/video/494283475" 
+                    width={mixerWidth} height={mixerHeight} 
+                    frameborder="0" 
+                    allow="fullscreen; picture-in-picture" 
+                    allowfullscreen
+                />
             </MixerContainer>
             <buton onClick={() => playAll()}>Play!</buton>
         </div>

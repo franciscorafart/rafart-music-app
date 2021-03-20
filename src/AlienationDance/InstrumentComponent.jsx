@@ -5,7 +5,8 @@ const Instrument = styled.div`
     height: ${props => `${props.height}`}px;
     width: ${props => `${props.width}`}px;;
     display: block;
-    border: 1px solid black;
+    border: 1px solid red;
+    color: red;
     position: absolute;
     top: ${props => `${props.position.top}px`};
     left: ${props => `${props.position.left}px`};
@@ -67,6 +68,8 @@ const InstrumentComponent = ({
     const [position, setPosition] = useState({top: startPosition.top, left: startPosition.left});
 
     const onDragOrDrop = e => {
+        // e.stopPropagation();
+        e.preventDefault();
         const positionInContainer = inContainer(
             {left: Number(e.clientX), top: Number(e.clientY)}, 
             height,
