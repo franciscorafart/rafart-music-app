@@ -44,13 +44,13 @@ const inContainer = (
 }
 
 const positionToPanGainTuple = (position, width, height, limits) => {
-    
+    // TODO: Fix math to make numbers exact
     const mixerWidth = limits.rightLimit - limits.leftLimit;
     const mixerHeight = limits.bottomLimit - limits.topLimit;
-    console.log('position', position, 'mixerWidth', mixerWidth, 'mixerHeight', mixerHeight)
-    const pan = (((position.left - limits.leftLimit - (width/2)) / mixerWidth) * 2) - 1;
-    const gain = (((position.top - limits.topLimit - (height/2)) / mixerHeight) * -1) + 1;
+    const pan = parseFloat((((position.left - limits.leftLimit - (width/2)) / mixerWidth) * 2) - 1);
+    const gain = parseFloat((((position.top - limits.topLimit - (height/2)) / mixerHeight) * -1) + 1);
 
+    console.log('pan', pan, 'gain', gain)
     return [pan, gain]
 }
 
@@ -62,10 +62,9 @@ const InstrumentComponent = ({
     limits,
     panControl,
     gainControl,
+    audioContext,
 }) => {
     const [position, setPosition] = useState({top: startPosition.top, left: startPosition.left});
-    const [pan, setPan] = useState(0);
-    const [gain, setGain] = useState(0.5); // Starting position really
 
     const onDragOrDrop = e => {
         const positionInContainer = inContainer(
@@ -78,13 +77,16 @@ const InstrumentComponent = ({
         setPosition(positionInContainer);
         
         const [pan, gain] = positionToPanGainTuple(positionInContainer, width, height, limits);
-        // TODO: update panControl and gainControl with the current state. No need for state
-        setPan(pan);
-        setGain(gain);
+        
+        // TODO: Can I get the audio context in a cleaner way?
+        if (panControl){
+            panControl.pan.setValueAtTime(pan, audioContext.currentTime);
+        }
+        
+        if (gainControl) {
+            gainControl.gain.setValueAtTime(gain, audioContext.currentTime);
+        }
     }
-
-    console.log('pan', pan, 'gain', gain);
-    
 
     return(
         <Instrument 

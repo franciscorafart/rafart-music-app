@@ -56,26 +56,26 @@ const initialInstrumentsState = {
     stick: {
         name: 'The Stick',
         startPosition: {left: 100, top: 100},
-        panNode: {},
-        gainNode: {},
+        panNode: undefined,
+        gainNode: undefined,
     },
     drums: {
         name: 'Drums',
         startPosition: {left: 200, top: 100},
-        panNode: {},
-        gainNode: {},
+        panNode: undefined,
+        gainNode: undefined,
     },
     synths: {
         name: 'Synth',
         startPosition: {left: 300, top: 100},
-        panNode: {},
-        gainNode: {},
+        panNode: undefined,
+        gainNode: undefined,
     },
     guitar: {
         name: 'Guitar',
         startPosition: {left: 400, top: 100},
-        panNode: {},
-        gainNode: {},
+        panNode: undefined,
+        gainNode: undefined,
     },
 }
 
@@ -109,7 +109,7 @@ const AlienationDance = () => {
     const playAll = () => {
         for (const audioBuffer of audioBuffers){
             const [panNode, gainNode] = playBuffer(Audio.context, Audio.masterGainNode, audioBuffer, 0);
-            // TODO: This is wrong, each instrument should have a file reference that's loaded and asign here
+            // TODO: This is wrong, each instrument should have a file reference that's loaded and assigned here
             setInstruments({
                 ...instruments,
                 stick: {
@@ -120,7 +120,7 @@ const AlienationDance = () => {
             })
         }
     }
-
+    // TODO: Enable play only when buffers are loaded
     console.log('audioBuffers', audioBuffers)
 
     return(
@@ -134,14 +134,11 @@ const AlienationDance = () => {
                         height={50} 
                         width={50} 
                         limits={limits}
-                        panControl={instrument.panControl}
-                        gainControl={instrument.gainControl}
+                        panControl={instrument.panNode}
+                        gainControl={instrument.gainNode}
+                        audioContext={Audio.context}
                     />
                 )}
-                {/* <InstrumentComponent name='The Stick' startPosition={{left: 100, top: 100}} height={50} width={50} limits={limits}/>
-                <InstrumentComponent name='Drums' startPosition={{left: 200, top: 100}} height={50} width={50} limits={limits}/>
-                <InstrumentComponent name='Synths' startPosition={{left: 300, top: 100}} height={50} width={50} limits={limits}/>
-                <InstrumentComponent name='Guitar' startPosition={{left: 400, top: 100}} height={50} width={50} limits={limits}/> */}
             </MixerContainer>
             <buton onClick={() => playAll()}>Play!</buton>
         </div>
