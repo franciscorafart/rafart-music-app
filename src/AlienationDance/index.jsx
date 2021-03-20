@@ -13,6 +13,10 @@ const MixerContainer = styled.div`
     border: 1px solid black;
 `;
 
+const IFrame = styled.iframe`
+    pointer-events: none;
+`;
+
 const getFile = async (audioCtx, filepath) => {
     const response = await fetch(filepath);
     const arrayBuffer = await response.arrayBuffer();
@@ -138,15 +142,15 @@ const AlienationDance = () => {
                         key={key}
                         name={instrument.name}
                         startPosition={instrument.startPosition}
-                        height={50} 
-                        width={50} 
+                        height={instrumentSize}
+                        width={instrumentSize}
                         limits={limits}
                         panControl={instrument.panNode}
                         gainControl={instrument.gainNode}
                         audioContext={Audio.context}
                     />
                 )}
-                <iframe 
+                <IFrame
                     src="https://player.vimeo.com/video/494283475" 
                     width={mixerWidth} height={mixerHeight} 
                     frameborder="0" 

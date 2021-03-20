@@ -68,8 +68,6 @@ const InstrumentComponent = ({
     const [position, setPosition] = useState({top: startPosition.top, left: startPosition.left});
 
     const onDragOrDrop = e => {
-        // e.stopPropagation();
-        e.preventDefault();
         const positionInContainer = inContainer(
             {left: Number(e.clientX), top: Number(e.clientY)}, 
             height,
