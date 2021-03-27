@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import InstrumentComponent from './InstrumentComponent';
 import useWindowSize from 'utils/hooks/useWindowSize';
 import Audio from './AudioEngine';
 import styled from 'styled-components';
 
 import file from 'assets/jarmasti.mp3'
+import vid from 'assets/AndesHazeNature.mp4';
 
 const MixerContainer = styled.div`
     margin: ${props => props.mixerPad}px 0 0 ${props => props.mixerPad}px;
@@ -13,8 +14,12 @@ const MixerContainer = styled.div`
     border: 1px solid black;
 `;
 
-const IFrame = styled.iframe`
-    pointer-events: none;
+const Video = styled.video`
+    z-index: -100;
+`
+
+const Button = styled.button`
+
 `;
 
 const getFile = async (audioCtx, filepath) => {
@@ -84,6 +89,7 @@ const initialInstrumentsState = {
 }
 
 const AlienationDance = () => {
+    const [play, setPlay] = useState(0);
     const windowSize = useWindowSize();
     const {width, _} = windowSize;
     const mixerPad = 30;
@@ -98,6 +104,8 @@ const AlienationDance = () => {
         topLimit: mixerPad,
         bottomLimit: mixerHeight + mixerPad,
     }
+
+    const videoRef = useRef(null);
 
     // Audio
     const [audioBuffers, setAudioBuffers] = useState([]);
@@ -128,15 +136,19 @@ const AlienationDance = () => {
                 }
             })
         }
+    };
 
-        // TODO: Add video playback control here
-    }
+    const pauseAll = () => Audio.context.suspend();
+    const resumeAll = () => Audio.context.resume();
+    
     // TODO: Enable play only when buffers are loaded
     console.log('audioBuffers', audioBuffers)
 
+    const videoLink = './assets/AndesHazeNature.mp4'
+    console.log(mixerWidth, mixerHeight)
     return(
         <div>
-            <MixerContainer height={mixerHeight} width={mixerWidth} mixerPad={mixerPad}>
+            {!isNaN(mixerHeight) && !isNaN(mixerWidth) && <MixerContainer height={mixerHeight} width={mixerWidth} mixerPad={mixerPad}>
                 {Object.entries(instruments).map(([key, instrument]) => 
                     <InstrumentComponent
                         key={key}
@@ -150,15 +162,29 @@ const AlienationDance = () => {
                         audioContext={Audio.context}
                     />
                 )}
-                <IFrame
-                    src="https://player.vimeo.com/video/494283475" 
-                    width={mixerWidth} height={mixerHeight} 
-                    frameborder="0" 
-                    allow="fullscreen; picture-in-picture" 
-                    allowfullscreen
+                <Video
+                    ref={videoRef}
+                    height={mixerHeight}
+                    width={mixerWidth}
+                    muted
+                    playsInline
+                    loop
+                    src={vid}
                 />
-            </MixerContainer>
-            <buton onClick={() => playAll()}>Play!</buton>
+            </MixerContainer>}
+            <Button onClick={() => {
+                if (play === 0){
+                    videoRef && videoRef.current && videoRef.current.play();
+                    playAll();
+                } else if (play % 2 === 0) {
+                    videoRef && videoRef.current && videoRef.current.play();
+                    resumeAll();
+                } else {
+                    videoRef && videoRef.current && videoRef.current.pause();
+                    pauseAll();
+                }
+                setPlay(play + 1)
+            }}>{play % 2 === 0 ? 'Play' : 'Pause'}</Button>
         </div>
     )
 };

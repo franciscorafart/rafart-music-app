@@ -11,6 +11,7 @@ const Instrument = styled.div`
     top: ${props => `${props.position.top}px`};
     left: ${props => `${props.position.left}px`};
     cursor: pointer;
+    z-index: 100;
 `;
 
 const inContainer = (
