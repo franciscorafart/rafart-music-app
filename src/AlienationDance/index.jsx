@@ -1,10 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, lazy} from 'react';
 import InstrumentComponent from './InstrumentComponent';
 import useWindowSize from 'utils/hooks/useWindowSize';
 import Audio from './AudioEngine';
 import styled from 'styled-components';
 
-import file from 'assets/jarmasti.mp3'
+// Files
+import file1 from 'assets/jarmasti.mp3';
 import vid from 'assets/AndesHazeNature.mp4';
 
 const MixerContainer = styled.div`
@@ -21,6 +22,7 @@ const Video = styled.video`
 const Button = styled.button`
 
 `;
+
 
 const getFile = async (audioCtx, filepath) => {
     const response = await fetch(filepath);
@@ -57,7 +59,7 @@ const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
 
     stemAudioSource.start(time);
 
-    // TODO: return gain and panning controls so that the UI can manipulate them
+    // Return gain and panning controls so that the UI can manipulate them
     return [panNode, stemGainNode];
 }
 
@@ -67,25 +69,27 @@ const initialInstrumentsState = {
         startPosition: {left: 100, top: 100},
         panNode: undefined,
         gainNode: undefined,
+        audioBuffer: undefined,
+        file: file1,
     },
-    drums: {
-        name: 'Drums',
-        startPosition: {left: 200, top: 100},
-        panNode: undefined,
-        gainNode: undefined,
-    },
-    synths: {
-        name: 'Synth',
-        startPosition: {left: 300, top: 100},
-        panNode: undefined,
-        gainNode: undefined,
-    },
-    guitar: {
-        name: 'Guitar',
-        startPosition: {left: 400, top: 100},
-        panNode: undefined,
-        gainNode: undefined,
-    },
+    // drums: {
+    //     name: 'Drums',
+    //     startPosition: {left: 200, top: 100},
+    //     panNode: undefined,
+    //     gainNode: undefined,
+    // },
+    // synths: {
+    //     name: 'Synth',
+    //     startPosition: {left: 300, top: 100},
+    //     panNode: undefined,
+    //     gainNode: undefined,
+    // },
+    // guitar: {
+    //     name: 'Guitar',
+    //     startPosition: {left: 400, top: 100},
+    //     panNode: undefined,
+    //     gainNode: undefined,
+    // },
 }
 
 const AlienationDance = () => {
@@ -108,7 +112,6 @@ const AlienationDance = () => {
     const videoRef = useRef(null);
 
     // Audio
-    const [audioBuffers, setAudioBuffers] = useState([]);
     const [instruments, setInstruments] = useState(initialInstrumentsState);
 
     const initializeMasterGain = () => {
@@ -118,19 +121,28 @@ const AlienationDance = () => {
 
     useEffect(() => {
         initializeMasterGain();
+        for (const [key, instrument] of Object.entries(instruments)){
 
-        // TODO: Somehow load file based on instrument and add them all
-        addAudioBuffer(Audio.context, file).then((tempBuffer => setAudioBuffers([...audioBuffers, tempBuffer])));
+            addAudioBuffer(Audio.context, instrument.file).then((buffer => 
+                setInstruments({
+                    ...instruments, 
+                    [key]: {
+                        ...instrument, 
+                        audioBuffer: buffer
+                    },
+                })
+            ));
+        }
     }, []);
 
     const playAll = () => {
-        for (const audioBuffer of audioBuffers){
-            const [panNode, gainNode] = playBuffer(Audio.context, Audio.masterGainNode, audioBuffer, 0);
-            // TODO: This is wrong, each instrument should have a file reference that's loaded and assigned here
+        for (const [key, instrument] of Object.entries(instruments)){
+            const [panNode, gainNode] = playBuffer(Audio.context, Audio.masterGainNode, instrument.audioBuffer, 0);
+
             setInstruments({
                 ...instruments,
-                stick: {
-                    ...instruments.stick,
+                [key]: {
+                    ...instrument,
                     panNode: panNode,
                     gainNode: gainNode,
                 }
@@ -140,11 +152,7 @@ const AlienationDance = () => {
 
     const pauseAll = () => Audio.context.suspend();
     const resumeAll = () => Audio.context.resume();
-    
-    // TODO: Enable play only when buffers are loaded
-    console.log('audioBuffers', audioBuffers)
 
-    const videoLink = './assets/AndesHazeNature.mp4'
     console.log(mixerWidth, mixerHeight)
     return(
         <div>
