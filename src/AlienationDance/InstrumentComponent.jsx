@@ -4,7 +4,6 @@ import styled from 'styled-components';
 const Instrument = styled.div`
     height: ${props => `${props.height}`}px;
     width: ${props => `${props.width}`}px;;
-    display: block;
     border: 1px solid red;
     color: red;
     position: absolute;
@@ -97,6 +96,7 @@ const InstrumentComponent = ({
             position={position}
             height={height}
             width={width}
+            draggable
         >{name}</Instrument>
     );
 };
