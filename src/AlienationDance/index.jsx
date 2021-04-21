@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState, lazy} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import InstrumentComponent from './InstrumentComponent';
 import useWindowSize from 'utils/hooks/useWindowSize';
 import Audio from './AudioEngine';
@@ -6,13 +6,34 @@ import styled from 'styled-components';
 
 // Files
 import file1 from 'assets/jarmasti.mp3';
-import vid from 'assets/AndesHazeNature.mp4';
+import vid from 'assets/rafartloop.m4v';
+import logoImage  from 'assets/logo.png';
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+`;
+
+const LogoContainer = styled.div`
+    width: 200px;
+`;
 
 const MixerContainer = styled.div`
-    margin: ${props => props.mixerPad}px 0 0 ${props => props.mixerPad}px;
+    margin: ${props => props.mixerPad}px 0 ${props => props.mixerPad}px 0;
     width: ${props => `${props.width}px`};
     height: ${props => `${props.height}px`};
-    border: 1px solid black;
+    border: 1px solid white;
+`;
+
+const ButtonsContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 30%;
+    padding: 20px 0 20px 0;
 `;
 
 const Video = styled.video`
@@ -20,7 +41,10 @@ const Video = styled.video`
 `
 
 const Button = styled.button`
-
+    width: 120px;
+    height: 60px;
+    background-color: ${props => props.color};
+    font-size: 1em;
 `;
 
 
@@ -102,7 +126,7 @@ const AlienationDance = () => {
     const mixerHeight = (360/640) * mixerWidth;
     const instrumentSize = 50;
 
-    const limits = {
+    const instrumentLimits = {
         rightLimit: width - mixerPad,
         leftLimit: mixerPad,
         topLimit: mixerPad,
@@ -155,7 +179,8 @@ const AlienationDance = () => {
 
     console.log(mixerWidth, mixerHeight)
     return(
-        <div>
+        <Container>
+            <LogoContainer><img src={logoImage} width='200px'/></LogoContainer>
             {!isNaN(mixerHeight) && !isNaN(mixerWidth) && <MixerContainer height={mixerHeight} width={mixerWidth} mixerPad={mixerPad}>
                 {Object.entries(instruments).map(([key, instrument]) => 
                     <InstrumentComponent
@@ -164,7 +189,7 @@ const AlienationDance = () => {
                         startPosition={instrument.startPosition}
                         height={instrumentSize}
                         width={instrumentSize}
-                        limits={limits}
+                        limits={instrumentLimits}
                         panControl={instrument.panNode}
                         gainControl={instrument.gainNode}
                         audioContext={Audio.context}
@@ -180,20 +205,29 @@ const AlienationDance = () => {
                     src={vid}
                 />
             </MixerContainer>}
-            <Button onClick={() => {
-                if (play === 0){
-                    videoRef && videoRef.current && videoRef.current.play();
-                    playAll();
-                } else if (play % 2 === 0) {
-                    videoRef && videoRef.current && videoRef.current.play();
-                    resumeAll();
-                } else {
-                    videoRef && videoRef.current && videoRef.current.pause();
-                    pauseAll();
-                }
-                setPlay(play + 1)
-            }}>{play % 2 === 0 ? 'Play' : 'Pause'}</Button>
-        </div>
+            <ButtonsContainer>
+                <Button
+                    color='#66ff66'
+                    onClick={() => {
+                        if (play === 0){
+                            videoRef && videoRef.current && videoRef.current.play();
+                            playAll();
+                        } else if (play % 2 === 0) {
+                            videoRef && videoRef.current && videoRef.current.play();
+                            resumeAll();
+                        } else {
+                            videoRef && videoRef.current && videoRef.current.pause();
+                            pauseAll();
+                        }
+                        setPlay(play + 1)
+                    }
+                }>{play % 2 === 0 ? 'Play' : 'Pause'}</Button>
+                <Button
+                    color='#ffff66'
+                    onClick={() => console.log('open Stripe modal')}
+                >Support this project</Button>
+            </ButtonsContainer>
+        </Container>
     )
 };
 
