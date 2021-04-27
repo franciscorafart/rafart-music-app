@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
-import Spinner from 'react-bootstrap/Spinner';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -50,6 +49,14 @@ const ButtonsContainer = styled.div`
 
 const Video = styled.video`
     z-index: -100;
+`;
+
+const PositionedAlert = styled(Alert)`
+    position: static;
+    margin-top: 10px;
+    width: 90%;
+    float: left;
+
 `;
 
 const getFile = async (audioCtx, filepath) => {
@@ -122,9 +129,7 @@ const initialInstrumentsState = {
 
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
-    const [price, setPrice] = useState(0);
     const [alert, setAlert] = useState({ display: false, message: '', variant: ''});
-
 
     const isProduction = process.env.NODE_ENV === 'production';
     const stripeKey = isProduction? process.env.REACT_APP_LIVE_STRIPE_PUBLIC_KEY: process.env.REACT_APP_TEST_STRIPE_PUBLIC_KEY;
@@ -203,7 +208,6 @@ const AlienationDance = () => {
         setAlert({display: display, variant: variant, message:message });
     };
 
-    console.log(mixerWidth, mixerHeight)
     return(
         <Container>
             <LogoContainer><img src={logoImage} width='200px'/></LogoContainer>
@@ -265,7 +269,6 @@ const AlienationDance = () => {
                     <Modal.Body>
                         <Elements stripe={stripePromise}>
                             <SplitForm
-                                price={price}
                                 displayAlert={displayAlert}
                                 handleClose={handleClose}
                             />
@@ -274,6 +277,21 @@ const AlienationDance = () => {
                     <Modal.Footer>
                         <span>Powered by Stripe</span>
                         <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal
+                    show={alert.display}
+                    size='lg'
+                    aria-labelledby="contained-modal-title-vcenter"
+                    centerd
+                >
+                    <Modal.Body>
+                        <PositionedAlert key={alert.variant} variant={alert.variant}>{alert.message}</PositionedAlert>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={clearMessage}>
                             Close
                         </Button>
                     </Modal.Footer>

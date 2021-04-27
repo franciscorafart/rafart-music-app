@@ -47,7 +47,6 @@ const initialFormState = {
 };
 
 const SplitForm = ({
-    price,
     displayAlert,
     handleClose,
 }) => {
@@ -59,6 +58,8 @@ const SplitForm = ({
   const [spinner, setSpinner] = useState(false);
   const [formEmail, setFormEmail] = useState('');
   const [formValidState, setFormValidState] = useState(initialFormState);
+  const [price, setPrice] = useState(0);
+
 
     const clearMessage = () => {
         setErrorAlert({ display: false, variant: '', message: ''});
@@ -100,7 +101,6 @@ const SplitForm = ({
             customerEmail: formEmail,
         };
 
-        // TODO: implement in backend without product id
         fetch('/get_intent', {
             method: 'POST',
             cache: 'no-cache',
@@ -113,8 +113,6 @@ const SplitForm = ({
         })
         .then((response) => response.json())
         .then((data) => {
-            const token = data.token;
-
             stripe.confirmCardPayment(data.clientSecret, {
                 payment_method: paymentMethod.id,
             }).then(result => {
@@ -126,7 +124,7 @@ const SplitForm = ({
 
                 if (result.paymentIntent) {
                     handleClose();
-                    // props.displayAlert(true, 'success', 'Your support was submitted successfully');
+                    displayAlert(true, 'success', 'Your support was submitted successfully');
                 }
             });
         })
@@ -152,6 +150,16 @@ const SplitForm = ({
         <FormContainer>
             <Form onSubmit={handleSubmit}>
                 {errorAlert.display && <Alert key={errorAlert.variant} variant={errorAlert.variant}>{errorAlert.message}</Alert>}
+                <FormGroup>
+                    <FormLabel>Amount</FormLabel>
+                    <Form.Control
+                        onFocus={clearMessage}
+                        onChange={(e) => setPrice(Number(e.target.value))}
+                        type='number'
+                        placeholder={100}
+                        required
+                    />
+                </FormGroup>
                 <FormGroup>
                     <FormLabel>
                         Email
