@@ -2,11 +2,11 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-// const AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const stripeKey = isProduction? process.env.LIVE_STRIPE_SECRET_KEY: process.env.TEST_STRIPE_SECRET_KEY;
-console.log('stripe key', stripeKey)
+
 const stripe = require('stripe')(stripeKey);
 
 const app = express();
@@ -29,15 +29,23 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
 });
 
+AWS.config.update({
+  accessKeyId: process.env.IAM_ACCESS_ID,
+  secretAccessKey: process.env.IAM_SECRET,
+  region: process.env.AWS_REGION,
+});
+
+const s3 = new AWS.S3();
+
 const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
     console.log(`Runing on port ${port}`);
 });
 
-// TODO: Implement endpoint to get audio files from S3
-
 // ENDPOINTS
+
+// Stripe payment intent
 app.post('/get_intent', (req, res) => {
   const payload = req.body;
   const { amount, currency, paymentMethodId, customerEmail } = payload;
@@ -50,7 +58,34 @@ app.post('/get_intent', (req, res) => {
   }).catch(e => res.json(JSON.stringify({"stripe_error": e})))
 });
 
+// Send audio files links from s3 to front end
+app.post('/get_audio_files', (_, res) => {
+  // TODO: Make real list for all instruments in production
+  const files = isProduction ? [['The Stick', 'stick.mp3', 'stick']] :  [['The Stick', 'stick.mp3', 'stick']];
+  const response = [];
+
+  try {
+    for (file of files) {
+      const instrumentName = file[0];
+      const filename = file[1];
+      const instrumentKey = file[2];
+      const url = retrieveFileUrlS3(filename);
+
+      response.push({
+        key: instrumentKey,
+        name: instrumentName,
+        url: url,
+      })
+    }
+  } catch (e) {
+    res.status(400).send(`There was an error on S3: ${e}`);
+  }
+
+  res.json({instruments: response})
+});
+
 // HELPERS
+
 const getStripeIntent = async (amount, currency, paymentMethodId, customerEmail) => {
   const description = "Rafart - Alienation Dance project support" + customerEmail
 
@@ -66,4 +101,14 @@ const getStripeIntent = async (amount, currency, paymentMethodId, customerEmail)
   });
 
   return await paymentIntent;
+}
+
+const retrieveFileUrlS3 = (filename) => {
+  const getParams = {
+      Bucket: process.env.BUCKET,
+      Key: filename,
+      Expires: 60, // seconds
+  };
+
+  return s3.getSignedUrl('getObject', getParams);
 }

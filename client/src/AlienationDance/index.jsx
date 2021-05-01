@@ -15,7 +15,7 @@ import Audio from './AudioEngine';
 import styled from 'styled-components';
 
 // Files
-import file1 from 'assets/jarmasti.mp3';
+import file1 from 'assets/stick.mp3';
 import vid from 'assets/rafartloop.m4v';
 import logoImage  from 'assets/logo.png';
 
@@ -98,35 +98,6 @@ const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
     return [panNode, stemGainNode];
 }
 
-const initialInstrumentsState = {
-    stick: {
-        name: 'The Stick',
-        startPosition: {left: 100, top: 100},
-        panNode: undefined,
-        gainNode: undefined,
-        audioBuffer: undefined,
-        file: file1,
-    },
-    // drums: {
-    //     name: 'Drums',
-    //     startPosition: {left: 200, top: 100},
-    //     panNode: undefined,
-    //     gainNode: undefined,
-    // },
-    // synths: {
-    //     name: 'Synth',
-    //     startPosition: {left: 300, top: 100},
-    //     panNode: undefined,
-    //     gainNode: undefined,
-    // },
-    // guitar: {
-    //     name: 'Guitar',
-    //     startPosition: {left: 400, top: 100},
-    //     panNode: undefined,
-    //     gainNode: undefined,
-    // },
-}
-
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
     const [alert, setAlert] = useState({ display: false, message: '', variant: ''});
@@ -155,28 +126,57 @@ const AlienationDance = () => {
     const videoRef = useRef(null);
 
     // Audio
-    const [instruments, setInstruments] = useState(initialInstrumentsState);
+    const [instruments, setInstruments] = useState({});
 
     const initializeMasterGain = () => {
         Audio.masterGainNode.connect(Audio.context.destination);
         Audio.masterGainNode.gain.setValueAtTime(1, Audio.context.currentTime);
     }
 
+    const processFile = (instrumentName, instrumentKey, filepath, idx) => {
+        addAudioBuffer(Audio.context, filepath).then((buffer => 
+            setInstruments({
+                ...instruments, 
+                [instrumentKey]: {
+                    name: instrumentName,
+                    startPosition: {left: 100*(idx+1), top: 100}, // TODO: Fix in correspondance with mix
+                    panNode: undefined,
+                    gainNode: undefined,
+                    audioBuffer: buffer
+                },
+            })
+        ));
+    }
+
+    // Load files from s3 and add tehm to buffer on initial render
     useEffect(() => {
         initializeMasterGain();
-        for (const [key, instrument] of Object.entries(instruments)){
-
-            addAudioBuffer(Audio.context, instrument.file).then((buffer => 
-                setInstruments({
-                    ...instruments, 
-                    [key]: {
-                        ...instrument, 
-                        audioBuffer: buffer
-                    },
-                })
-            ));
-        }
+        console.log('isProduction', isProduction)
+        fetch('/get_audio_files', {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            const instruments = data.instruments;
+            console.log('Instruments response', instruments)
+            if (isProduction) {
+                for (const [idx, instrument] of instruments.entries()) {
+                    processFile(instrument.name, instrument.key, instrument.url, idx);
+                }
+            } else {
+                console.log('Loading audio filelocally')
+                // Don't download from S3 in local env
+                processFile('The Stick', 'stick', file1, 0);
+            } 
+        });
     }, []);
+
 
     const playAll = () => {
         for (const [key, instrument] of Object.entries(instruments)){
