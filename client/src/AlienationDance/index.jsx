@@ -15,7 +15,6 @@ import Audio from './AudioEngine';
 import styled from 'styled-components';
 
 // Files
-import vid from 'assets/rafartloop.m4v';
 import logoImage  from 'assets/logo.png';
 
 
@@ -224,7 +223,7 @@ const AlienationDance = () => {
                     muted
                     playsInline
                     loop
-                    src={vid}
+                    src='https://player.vimeo.com/external/544030006.hd.mp4?s=04cde03295c6b6cd31aede65f0c6d2ad0b3614ad&profile_id=175   '
                 />
             </MixerContainer>}
             <ButtonsContainer>
