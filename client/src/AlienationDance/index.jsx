@@ -15,7 +15,6 @@ import Audio from './AudioEngine';
 import styled from 'styled-components';
 
 // Files
-import file1 from 'assets/stick.mp3';
 import vid from 'assets/rafartloop.m4v';
 import logoImage  from 'assets/logo.png';
 
@@ -164,16 +163,9 @@ const AlienationDance = () => {
         .then((response) => response.json())
         .then((data) => {
             const instruments = data.instruments;
-            console.log('Instruments response', instruments)
-            if (isProduction) {
-                for (const [idx, instrument] of instruments.entries()) {
-                    processFile(instrument.name, instrument.key, instrument.url, idx);
-                }
-            } else {
-                console.log('Loading audio filelocally')
-                // Don't download from S3 in local env
-                processFile('The Stick', 'stick', file1, 0);
-            } 
+            for (const [idx, instrument] of instruments.entries()) {
+                processFile(instrument.name, instrument.key, instrument.url, idx);
+            }
         });
     }, []);
 
