@@ -60,8 +60,15 @@ app.post('/get_intent', (req, res) => {
 
 // Send audio files links from s3 to front end
 app.post('/get_audio_files', (_, res) => {
-  // TODO: Make real list for all instruments in production
-  const files = isProduction ? [['The Stick', 'stick.mp3', 'stick']] :  [['The Stick', 'stick.mp3', 'stick']];
+  const files = isProduction ? [
+    ['Stick', 'stick.mp3', 'stick'],
+    ['Guitars', 'guitar.mp3', 'guitar'],
+    ['Bass', 'bass.mp3', 'bass'],
+    ['Synths', 'synth.mp3', 'synth'],
+    ['FX', 'fx.mp3', 'fx'],
+    ['Drums', 'drums.mp3', 'drum'],
+    ['Vox', 'vox.mp3', 'vox'],
+  ] :  [['Stick', 'stick.mp3', 'stick']];
   const response = [];
 
   try {
