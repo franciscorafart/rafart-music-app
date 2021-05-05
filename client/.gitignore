@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 /src/assets/stick.mp3
+/src/assets/synth.mp3
 
 # testing
 /coverage

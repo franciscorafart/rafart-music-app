@@ -17,7 +17,6 @@ import styled from 'styled-components';
 // Files
 import logoImage  from 'assets/logo.png';
 
-
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -131,41 +130,53 @@ const AlienationDance = () => {
         Audio.masterGainNode.gain.setValueAtTime(1, Audio.context.currentTime);
     }
 
-    const processFile = (instrumentName, instrumentKey, filepath, idx) => {
-        addAudioBuffer(Audio.context, filepath).then((buffer => 
-            setInstruments({
-                ...instruments, 
-                [instrumentKey]: {
-                    name: instrumentName,
+    const processFiles = async (insts) => {
+
+        let allInstruments = {};
+        for (const [idx, inst] of insts.entries()) {
+            const {name, key, url} = inst;
+            await addAudioBuffer(Audio.context, url).then(buffer => {
+                allInstruments[key] = {
+                    name: name,
                     startPosition: {left: 100*(idx+1), top: 100}, // TODO: Fix in correspondance with mix
                     panNode: undefined,
                     gainNode: undefined,
                     audioBuffer: buffer
-                },
-            })
-        ));
+                }
+            });
+        }
+        setInstruments(allInstruments);   
     }
 
     // Load files from s3 and add tehm to buffer on initial render
     useEffect(() => {
         initializeMasterGain();
         console.log('isProduction', isProduction)
-        fetch('/get_audio_files', {
-            method: 'POST',
-            cache: 'no-cache',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            const instruments = data.instruments;
-            for (const [idx, instrument] of instruments.entries()) {
-                processFile(instrument.name, instrument.key, instrument.url, idx);
-            }
-        });
+        if (isProduction) {
+            fetch('/get_audio_files', {
+                method: 'POST',
+                cache: 'no-cache',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                const instrumentsBackend = data.instruments;
+                processFiles(instrumentsBackend);
+            });
+        } else {
+            (async () => {
+                const synthFile = await import('assets/synth.mp3');
+                const stickFile = await import('assets/stick.mp3');
+                processFiles([
+                    {name: 'Synth', key: 'synth', url: synthFile.default},
+                    {name: 'Stick', key: 'stick', url: stickFile.default}
+                ]);
+            })();
+        }
     }, []);
 
 

@@ -68,7 +68,10 @@ app.post('/get_audio_files', (_, res) => {
     ['FX', 'fx.mp3', 'fx'],
     ['Drums', 'drums.mp3', 'drum'],
     ['Vox', 'vox.mp3', 'vox'],
-  ] :  [['Stick', 'stick.mp3', 'stick']];
+  ] :  [
+    ['Stick', 'stick.mp3', 'stick'],
+    ['Synths', 'synth.mp3', 'synth'],
+  ];
   const response = [];
 
   try {
