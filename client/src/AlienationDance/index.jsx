@@ -5,7 +5,6 @@ import {isEmpty} from 'lodash';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-
 import InstrumentComponent from './InstrumentComponent';
 import useWindowSize from 'utils/hooks/useWindowSize';
 import Audio from './AudioEngine';
@@ -14,6 +13,7 @@ import styled from 'styled-components';
 
 // Files
 import logoImage  from 'assets/logo.png';
+import mask from 'assets/Mask.png'
 
 const Container = styled.div`
     display: flex;
@@ -44,6 +44,13 @@ const ButtonsContainer = styled.div`
 
 const Video = styled.video`
     z-index: -100;
+`;
+
+const Mask = styled.img`
+    width: ${props => `${props.width}px`};
+    height: ${props => `${props.height}px`};
+    z-index: 10;
+    position: absolute;
 `;
 
 const getFile = async (audioCtx, filepath) => {
@@ -206,6 +213,12 @@ const AlienationDance = () => {
                         audioContext={Audio.context}
                     />
                 )}
+                <Mask 
+                    height={mixerHeight}
+                    width={mixerWidth}
+                    mixerPad={mixerPad}
+                    src={mask} 
+                />
                 <Video
                     ref={videoRef}
                     height={mixerHeight}
