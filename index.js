@@ -60,7 +60,7 @@ app.post('/get_intent', (req, res) => {
 
 // Send audio files links from s3 to front end
 app.post('/get_audio_files', (_, res) => {
-  const files = isProduction ? [
+  const files = [
     ['Stick', 'stick.mp3', 'stick'],
     ['Guitars', 'guitar.mp3', 'guitar'],
     ['Bass', 'bass.mp3', 'bass'],
@@ -68,10 +68,8 @@ app.post('/get_audio_files', (_, res) => {
     ['FX', 'fx.mp3', 'fx'],
     ['Drums', 'drums.mp3', 'drum'],
     ['Vox', 'vox.mp3', 'vox'],
-  ] :  [
-    ['Stick', 'stick.mp3', 'stick'],
-    ['Synths', 'synth.mp3', 'synth'],
   ];
+
   const response = [];
 
   try {

@@ -1,17 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Alert from 'react-bootstrap/Alert';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
 
-import SplitForm from './SplitForm';
 import InstrumentComponent from './InstrumentComponent';
 import useWindowSize from 'utils/hooks/useWindowSize';
 import Audio from './AudioEngine';
+import StripeModal from './StripeModal';
 import styled from 'styled-components';
 
 // Files
@@ -46,14 +43,6 @@ const ButtonsContainer = styled.div`
 
 const Video = styled.video`
     z-index: -100;
-`;
-
-const PositionedAlert = styled(Alert)`
-    position: static;
-    margin-top: 10px;
-    width: 90%;
-    float: left;
-
 `;
 
 const getFile = async (audioCtx, filepath) => {
@@ -97,12 +86,8 @@ const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
 
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
-    const [alert, setAlert] = useState({ display: false, message: '', variant: ''});
 
     const isProduction = process.env.NODE_ENV === 'production';
-    const stripeKey = isProduction? process.env.REACT_APP_LIVE_STRIPE_PUBLIC_KEY: process.env.REACT_APP_TEST_STRIPE_PUBLIC_KEY;
-
-    const stripePromise = loadStripe(stripeKey);
 
     const [play, setPlay] = useState(0);
     const windowSize = useWindowSize();
@@ -148,10 +133,10 @@ const AlienationDance = () => {
         setInstruments(allInstruments);   
     }
 
-    // Load files from s3 and add tehm to buffer on initial render
+    // Load files from s3 (or local folder) and add them to buffer on initial render
     useEffect(() => {
         initializeMasterGain();
-        console.log('isProduction', isProduction)
+        
         if (isProduction) {
             fetch('/get_audio_files', {
                 method: 'POST',
@@ -177,7 +162,7 @@ const AlienationDance = () => {
                 ]);
             })();
         }
-    }, []);
+    }, [isProduction]);
 
 
     const playAll = () => {
@@ -198,16 +183,8 @@ const AlienationDance = () => {
     const pauseAll = () => Audio.context.suspend();
     const resumeAll = () => Audio.context.resume();
 
-    const handleClose = () => {
+    const handleStripeModalClose = () => {
         setDisplayForm(false);
-    };
-
-    const clearMessage = () => {
-        setAlert({ display: false, variant: '', message: ''});
-    };
-
-    const displayAlert = (display, variant, message) => {
-        setAlert({display: display, variant: variant, message:message });
     };
 
     return(
@@ -257,47 +234,10 @@ const AlienationDance = () => {
                     onClick={() => setDisplayForm(true)}
                 >Support this project</Button>
             </ButtonsContainer>
-            <Modal
-                    show={displayForm}
-                    size="lg"
-                    aria-labelledby="contained-modal-title-vcenter"
-                    centered
-                >
-                    <Modal.Header>
-                        <Modal.Title id="contained-modal-title-vcenter">
-                            Enter your card information
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Elements stripe={stripePromise}>
-                            <SplitForm
-                                displayAlert={displayAlert}
-                                handleClose={handleClose}
-                            />
-                        </Elements>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <span>Powered by Stripe</span>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-                <Modal
-                    show={alert.display}
-                    size='lg'
-                    aria-labelledby="contained-modal-title-vcenter"
-                    centerd
-                >
-                    <Modal.Body>
-                        <PositionedAlert key={alert.variant} variant={alert.variant}>{alert.message}</PositionedAlert>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={clearMessage}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
+            <StripeModal 
+                open={displayForm}
+                handleClose={handleStripeModalClose}
+            />
         </Container>
     )
 };
