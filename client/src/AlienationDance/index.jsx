@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import {isEmpty} from 'lodash';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -86,6 +87,7 @@ const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
 
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
+    const [displayDialog, setDisplayDialog] = useState(true);
 
     const isProduction = process.env.NODE_ENV === 'production';
 
@@ -136,7 +138,7 @@ const AlienationDance = () => {
     // Load files from s3 (or local folder) and add them to buffer on initial render
     useEffect(() => {
         initializeMasterGain();
-        
+
         if (isProduction) {
             fetch('/get_audio_files', {
                 method: 'POST',
@@ -234,6 +236,35 @@ const AlienationDance = () => {
                     onClick={() => setDisplayForm(true)}
                 >Support this project</Button>
             </ButtonsContainer>
+            <Modal
+                show={displayDialog}
+                centered
+            >
+                <Modal.Header>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        Alienation Dance - interactive musical experience by Rafart
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Alienation Dance is a song released as an interactive musical experience. 
+                    You can live mix the song by dragging the instrument icons on the surface.
+
+                    If you can, support this project through the Stripe form below. All transactions encrypted. 
+                    
+                    Thanks and enjoy!
+                </Modal.Body>
+                <Modal.Footer>
+                <Button
+                    onClick={() => {
+                        setDisplayDialog(false);
+                        videoRef && videoRef.current && videoRef.current.play();
+                        playAll();
+                        setPlay(play + 1)
+                    }}
+                    disabled={isEmpty(instruments)}
+                >{'Start the experience'}</Button>
+                </Modal.Footer>
+            </Modal>
             <StripeModal 
                 open={displayForm}
                 handleClose={handleStripeModalClose}
