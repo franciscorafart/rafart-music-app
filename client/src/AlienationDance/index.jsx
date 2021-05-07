@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
 import {isEmpty} from 'lodash';
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -21,6 +22,7 @@ const Container = styled.div`
     align-items: center;
     margin-top: 20px;
     margin-bottom: 20px;
+    background-color: black;
 `;
 
 const LogoContainer = styled.div`
@@ -31,7 +33,7 @@ const MixerContainer = styled.div`
     margin: ${props => props.mixerPad}px 0 ${props => props.mixerPad}px 0;
     width: ${props => `${props.width}px`};
     height: ${props => `${props.height}px`};
-    border: 1px solid white;
+    // border: 1px solid white;
 `;
 
 const ButtonsContainer = styled.div`
@@ -96,7 +98,7 @@ const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
     const [displayDialog, setDisplayDialog] = useState(true);
 
-    const isProduction = process.env.NODE_ENV === 'production';
+    // const isProduction = process.env.NODE_ENV === 'production';
 
     const [play, setPlay] = useState(0);
     const windowSize = useWindowSize();
@@ -257,27 +259,31 @@ const AlienationDance = () => {
             >
                 <Modal.Header>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Alienation Dance - interactive musical experience by Rafart
+                        Alienation Dance - Interactive Music Experience
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Alienation Dance is a song released as an interactive musical experience. 
-                    You can live mix the song by dragging the instrument icons on the surface.
-
-                    If you can, support this project through the Stripe form below. All transactions encrypted. 
+                    <p>Alienation Dance is an interactive song released as web app musical experience.</p>
+                    <p>You can live mix the song by dragging the instrument icons on the surface, panning left and right, and changing levels up and down</p>
                     
-                    Thanks and enjoy!
+                    <p>Please support this project by clicking on the <strong>Donate</strong> button on the next screen. All transactions are encrypted and powered by Stripe. </p>
+
+                    <p>This project is part of The Great Refusal, a live music experience funded by the Live Arts Boston 2020 grant by the Boston Foundation</p>
+
+                    <p>Thanks and enjoy!</p>
+                    <p>Rafart</p>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button
-                    onClick={() => {
-                        setDisplayDialog(false);
-                        videoRef && videoRef.current && videoRef.current.play();
-                        playAll();
-                        setPlay(play + 1)
-                    }}
-                    disabled={isEmpty(instruments)}
-                >{'Start the experience'}</Button>
+                    {isEmpty(instruments) && <Spinner animation="border" />}
+                    <Button
+                        onClick={() => {
+                            setDisplayDialog(false);
+                            videoRef && videoRef.current && videoRef.current.play();
+                            playAll();
+                            setPlay(play + 1)
+                        }}
+                        disabled={isEmpty(instruments)}
+                    >{'Start the experience'}</Button>
                 </Modal.Footer>
             </Modal>
             <StripeModal 
