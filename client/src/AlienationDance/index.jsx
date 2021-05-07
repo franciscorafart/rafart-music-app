@@ -146,7 +146,7 @@ const AlienationDance = () => {
     useEffect(() => {
         initializeMasterGain();
 
-        if (isProduction) {
+
             fetch('/get_audio_files', {
                 method: 'POST',
                 cache: 'no-cache',
@@ -161,17 +161,20 @@ const AlienationDance = () => {
                 const instrumentsBackend = data.instruments;
                 processFiles(instrumentsBackend);
             });
-        } else {
-            (async () => {
-                const synthFile = await import('assets/synth.mp3');
-                const stickFile = await import('assets/stick.mp3');
-                processFiles([
-                    {name: 'Synth', key: 'synth', url: synthFile.default},
-                    {name: 'Stick', key: 'stick', url: stickFile.default}
-                ]);
-            })();
-        }
-    }, [isProduction]);
+    }, []);
+
+    // Use in dev mode
+    // useEffect(() => {
+    //     initializeMasterGain();
+    //     (async () => {
+    //         const synthFile = await import('assets/synth.mp3');
+    //         const stickFile = await import('assets/stick.mp3');
+    //         processFiles([
+    //             {name: 'Synth', key: 'synth', url: synthFile.default},
+    //             {name: 'Stick', key: 'stick', url: stickFile.default}
+    //         ]);
+    //     })();
+    // }, []);
 
 
     const playAll = () => {
