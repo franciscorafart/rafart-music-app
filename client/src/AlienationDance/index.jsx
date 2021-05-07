@@ -127,7 +127,7 @@ const AlienationDance = () => {
     const processFiles = async (insts) => {
 
         let allInstruments = {};
-        for (const [idx, inst] of insts.entries()) {
+        for await (const [idx, inst] of insts.entries()) {
             const {name, key, url} = inst;
             await addAudioBuffer(Audio.context, url).then(buffer => {
                 allInstruments[key] = {
@@ -178,18 +178,17 @@ const AlienationDance = () => {
 
 
     const playAll = () => {
+        const allInstruments = {}
         for (const [key, instrument] of Object.entries(instruments)){
             const [panNode, gainNode] = playBuffer(Audio.context, Audio.masterGainNode, instrument.audioBuffer, 0);
-
-            setInstruments({
-                ...instruments,
-                [key]: {
-                    ...instrument,
-                    panNode: panNode,
-                    gainNode: gainNode,
-                }
-            })
+            allInstruments[key] = {
+                ...instrument,
+                panNode: panNode,
+                gainNode: gainNode,
+            }
         }
+
+        setInstruments(allInstruments);
     };
 
     const pauseAll = () => Audio.context.suspend();
