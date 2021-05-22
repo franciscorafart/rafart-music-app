@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import InstrumentComponent from './InstrumentComponent';
 import useWindowSize from 'utils/hooks/useWindowSize';
 import Audio from './AudioEngine';
-import StripeModal from './StripeModal';
+import StripeModal from 'StripeModal';
 import styled from 'styled-components';
 
 // Files
@@ -145,38 +145,38 @@ const AlienationDance = () => {
     }
 
     // Load files from s3 (or local folder) and add them to buffer on initial render
-    useEffect(() => {
-        initializeMasterGain();
-
-
-            fetch('/get_audio_files', {
-                method: 'POST',
-                cache: 'no-cache',
-                headers: {
-                'Content-Type': 'application/json'
-                },
-                redirect: 'follow',
-                referrerPolicy: 'no-referrer',
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                const instrumentsBackend = data.instruments;
-                processFiles(instrumentsBackend);
-            });
-    }, []);
-
-    // Use in dev mode
     // useEffect(() => {
     //     initializeMasterGain();
-    //     (async () => {
-    //         const synthFile = await import('assets/synth.mp3');
-    //         const stickFile = await import('assets/stick.mp3');
-    //         processFiles([
-    //             {name: 'Synth', key: 'synth', url: synthFile.default},
-    //             {name: 'Stick', key: 'stick', url: stickFile.default}
-    //         ]);
-    //     })();
+
+
+    //         fetch('/get_audio_files', {
+    //             method: 'POST',
+    //             cache: 'no-cache',
+    //             headers: {
+    //             'Content-Type': 'application/json'
+    //             },
+    //             redirect: 'follow',
+    //             referrerPolicy: 'no-referrer',
+    //         })
+    //         .then((response) => response.json())
+    //         .then((data) => {
+    //             const instrumentsBackend = data.instruments;
+    //             processFiles(instrumentsBackend);
+    //         });
     // }, []);
+
+    // Use in dev mode
+    useEffect(() => {
+        initializeMasterGain();
+        (async () => {
+            const synthFile = await import('assets/synth.mp3');
+            const stickFile = await import('assets/stick.mp3');
+            processFiles([
+                {name: 'Synth', key: 'synth', url: synthFile.default},
+                {name: 'Stick', key: 'stick', url: stickFile.default}
+            ]);
+        })();
+    }, []);
 
 
     const playAll = () => {
