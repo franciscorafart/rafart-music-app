@@ -59,9 +59,10 @@ const StripeModal = ({
             </Modal.Body>
             <Modal.Footer>
                 <span>Powered by Stripe</span>
-                <Button variant="secondary" onClick={handleClose}>
-                    Close
-                </Button>
+                {handleClose && 
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                     </Button>}
             </Modal.Footer>
         </Modal>
         <Modal

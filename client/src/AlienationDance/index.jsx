@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import InstrumentComponent from './InstrumentComponent';
 import useWindowSize from 'utils/hooks/useWindowSize';
 import Audio from './AudioEngine';
-import StripeModal from './StripeModal';
+import StripeModal from 'StripeModal';
 import styled from 'styled-components';
 
 // Files
