@@ -70,7 +70,7 @@ const AppLanding = () => {
         <Container>
             <LogoContainer><img src={logoImage} width='200px'/></LogoContainer>
 
-            <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/B7oSBaL0BCY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></IFrame>    
+            <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/DqQxDBfEJCU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></IFrame>
             <Button
                     onClick={() => setDisplayForm(true)}
             >Support this project</Button>
