@@ -44,7 +44,7 @@ const sizes = {
 }
 
 const AppLanding = () => {
-    const [displayForm, setDisplayForm] = useState(true);
+    const [displayForm, setDisplayForm] = useState(false);
 
     const handleStripeModalClose = () => {
         setDisplayForm(false);
@@ -73,7 +73,7 @@ const AppLanding = () => {
             <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/DqQxDBfEJCU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></IFrame>
             <Button
                     onClick={() => setDisplayForm(true)}
-            >Support this project</Button>
+            >Support this project!</Button>
             <StripeModal 
                 open={displayForm}
                 handleClose={handleStripeModalClose}
