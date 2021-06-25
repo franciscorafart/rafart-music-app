@@ -151,12 +151,12 @@ const SplitForm = ({
             <Form onSubmit={handleSubmit}>
                 {errorAlert.display && <Alert key={errorAlert.variant} variant={errorAlert.variant}>{errorAlert.message}</Alert>}
                 <FormGroup>
-                    <FormLabel>Amount</FormLabel>
+                    <FormLabel>Amount (USD)</FormLabel>
                     <Form.Control
                         onFocus={clearMessage}
                         onChange={(e) => setPrice(Number(e.target.value))}
                         type='number'
-                        placeholder={100}
+                        placeholder='30'
                         required
                     />
                 </FormGroup>
