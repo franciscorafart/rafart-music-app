@@ -51,7 +51,7 @@ const positionToPanGainTuple = (position, width, height, limits) => {
     const pan = parseFloat((((position.left - limits.leftLimit - (width/2)) / mixerWidth) * 2) - 1);
     const gain = parseFloat((((position.top - limits.topLimit - (height/2)) / mixerHeight) * -1) + 1);
 
-    console.log('pan', pan, 'gain', gain)
+    // console.log('pan', pan, 'gain', gain)
     return [pan, gain]
 }
 
@@ -67,31 +67,43 @@ const InstrumentComponent = ({
 }) => {
     const [position, setPosition] = useState({top: startPosition.top, left: startPosition.left});
 
+    const onDragStart = e => {
+        // NOTE: Trick to remove the drag ghost image
+        e.dataTransfer.setDragImage(e.target, window.outerWidth, window.outerHeight);
+    }
     const onDragOrDrop = e => {
-        const positionInContainer = inContainer(
-            {left: Number(e.clientX), top: Number(e.clientY)}, 
-            height,
-            width,
-            limits,
-        );
+        const newLeft = Number(e.clientX);
+        const newTop = Number(e.clientY);
 
-        setPosition(positionInContainer);
-        
-        const [pan, gain] = positionToPanGainTuple(positionInContainer, width, height, limits);
-        
-        // TODO: Can I get the audio context in a cleaner way?
-        if (panControl){
-            panControl.pan.setValueAtTime(pan, audioContext.currentTime);
+        // NOTE: if-statement is a temporary solution to avoid audio discontinuity when mouse moves too quickly.
+        if (Math.abs(newLeft - position.left) <= 120 && Math.abs(newTop - position.top) <= 120) {
+            const positionInContainer = inContainer(
+                {left: newLeft, top: newTop},
+                height,
+                width,
+                limits,
+            );
+
+            setPosition(positionInContainer);
+
+            const [pan, gain] = positionToPanGainTuple(positionInContainer, width, height, limits);
+
+            // TODO: Can I get the audio context in a cleaner way?
+            if (panControl){
+                panControl.pan.setValueAtTime(pan, audioContext.currentTime);
+            }
+
+            if (gainControl) {
+                gainControl.gain.setValueAtTime(gain, audioContext.currentTime);
+            }
         }
-        
-        if (gainControl) {
-            gainControl.gain.setValueAtTime(gain, audioContext.currentTime);
-        }
+
     }
 
     return(
         <Instrument 
-            onDrag={onDragOrDrop} 
+            onDrag={onDragOrDrop}
+            onDragStart={onDragStart} // Remove ghost image
             onDragEnd={onDragOrDrop}
             position={position}
             height={height}
