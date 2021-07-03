@@ -79,6 +79,8 @@ app.post('/get_audio_files', (_, res) => {
       const instrumentKey = file[2];
       const url = retrieveFileUrlS3(filename);
 
+      // TODO: Get image files from S3 as well.
+
       response.push({
         key: instrumentKey,
         name: instrumentName,

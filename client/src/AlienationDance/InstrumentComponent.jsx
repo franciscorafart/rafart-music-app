@@ -1,17 +1,35 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 
-const Instrument = styled.div`
+import stickImage from 'assets/Stick.png';
+import guitarImage from 'assets/Guitar.png';
+import synthImage from 'assets/Synth.png';
+import padImage from 'assets/Pad.png';
+import voxImage from 'assets/Vox.png';
+import bassImage from 'assets/Bass.png';
+import fxImage from 'assets/Fx.png';
+
+const Instrument = styled.img`
     height: ${props => `${props.height}`}px;
-    width: ${props => `${props.width}`}px;;
-    border: 1px solid red;
-    color: red;
+    width: ${props => `${props.width}`}px;
+    border-radius: 50%; 
+    border: 1px solid gray;
     position: absolute;
     top: ${props => `${props.position.top}px`};
     left: ${props => `${props.position.left}px`};
     cursor: pointer;
     z-index: 100;
 `;
+
+const instrumentImages = {
+    Stick: stickImage,
+    Guitars: guitarImage,
+    Bass: bassImage,
+    Synths: synthImage,
+    FX: fxImage,
+    Drums: padImage,
+    Vox: voxImage,
+}
 
 const inContainer = (
     position, 
@@ -99,17 +117,20 @@ const InstrumentComponent = ({
         }
 
     }
+    
+    const image = instrumentImages[name];
 
     return(
         <Instrument 
+            src={image}
             onDrag={onDragOrDrop}
-            onDragStart={onDragStart} // Remove ghost image
+            onDragStart={onDragStart} // Note: Remove ghost image
             onDragEnd={onDragOrDrop}
             position={position}
             height={height}
             width={width}
             draggable
-        >{name}</Instrument>
+        />
     );
 };
 

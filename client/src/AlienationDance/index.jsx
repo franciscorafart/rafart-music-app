@@ -33,7 +33,6 @@ const MixerContainer = styled.div`
     margin: ${props => props.mixerPad}px 0 ${props => props.mixerPad}px 0;
     width: ${props => `${props.width}px`};
     height: ${props => `${props.height}px`};
-    // border: 1px solid white;
 `;
 
 const ButtonsContainer = styled.div`
@@ -107,7 +106,7 @@ const AlienationDance = () => {
 
     const mixerWidth = width - (mixerPad*2);
     const mixerHeight = (360/640) * mixerWidth;
-    const instrumentSize = 50;
+    const instrumentSize = 100;
 
     const instrumentLimits = {
         rightLimit: width - mixerPad,
@@ -147,8 +146,6 @@ const AlienationDance = () => {
     // Load files from s3 (or local folder) and add them to buffer on initial render
     useEffect(() => {
         initializeMasterGain();
-
-
             fetch('/get_audio_files', {
                 method: 'POST',
                 cache: 'no-cache',
@@ -169,10 +166,10 @@ const AlienationDance = () => {
     // useEffect(() => {
     //     initializeMasterGain();
     //     (async () => {
-    //         const synthFile = await import('assets/synth.mp3');
+    //         // const synthFile = await import('assets/synth.mp3');
     //         const stickFile = await import('assets/stick.mp3');
     //         processFiles([
-    //             {name: 'Synth', key: 'synth', url: synthFile.default},
+    //             // {name: 'Synth', key: 'synth', url: synthFile.default},
     //             {name: 'Stick', key: 'stick', url: stickFile.default}
     //         ]);
     //     })();
