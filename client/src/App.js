@@ -9,9 +9,10 @@ function App() {
       <BrowserRouter>
         <Switch>
           <Route path='/'>
-            <AppLanding />
+            {/* <AppLanding /> */}
+            <AlienationDance />
           </Route>
-          <Route path='/alienation-dance' exact>
+          <Route path='/alienation-dance'>
             <AlienationDance />
           </Route>
         </Switch>

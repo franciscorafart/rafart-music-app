@@ -82,15 +82,29 @@ const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
     const stemGainNode = audioCtx.createGain();
     stemGainNode.gain.setValueAtTime(1, audioCtx.currentTime);
 
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    // analyser.fftSize = 126;
+
+    const bufferLength = analyser.frequencyBinCount;
+
+    // NOTE: Maybe I don't need this here?
+    var dataArray = new Uint8Array(bufferLength);
+    analyser.getByteTimeDomainData(dataArray);
+
+    // Connect the source to be analysed
+    // source.connect(analyser);
+
     // Singal chain
-    stemAudioSource.connect(panNode);
+    stemAudioSource.connect(analyser);
+    analyser.connect(panNode);
     panNode.connect(stemGainNode);
     stemGainNode.connect(masterGainNode);
 
     stemAudioSource.start(time);
 
     // Return gain and panning controls so that the UI can manipulate them
-    return [panNode, stemGainNode];
+    return [panNode, stemGainNode, analyser];
 }
 
 const AlienationDance = () => {
@@ -133,9 +147,10 @@ const AlienationDance = () => {
             await addAudioBuffer(Audio.context, url).then(buffer => {
                 allInstruments[key] = {
                     name: name,
-                    startPosition: {left: 100*(idx+1), top: 100}, // TODO: Fix in correspondance with mix
+                    startPosition: {left: 150*(idx+1), top: 300},
                     panNode: undefined,
                     gainNode: undefined,
+                    analyser: undefined,
                     audioBuffer: buffer
                 }
             });
@@ -179,11 +194,12 @@ const AlienationDance = () => {
     const playAll = () => {
         const allInstruments = {}
         for (const [key, instrument] of Object.entries(instruments)){
-            const [panNode, gainNode] = playBuffer(Audio.context, Audio.masterGainNode, instrument.audioBuffer, 0);
+            const [panNode, gainNode, analyser] = playBuffer(Audio.context, Audio.masterGainNode, instrument.audioBuffer, 0);
             allInstruments[key] = {
                 ...instrument,
                 panNode: panNode,
                 gainNode: gainNode,
+                analyser: analyser,
             }
         }
 
@@ -211,6 +227,7 @@ const AlienationDance = () => {
                         limits={instrumentLimits}
                         panControl={instrument.panNode}
                         gainControl={instrument.gainNode}
+                        analyser={instrument.analyser}
                         audioContext={Audio.context}
                     />
                 )}

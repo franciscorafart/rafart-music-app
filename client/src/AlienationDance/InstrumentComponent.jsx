@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import styled from 'styled-components';
 
 import stickImage from 'assets/Stick.png';
@@ -19,6 +19,7 @@ const Instrument = styled.img`
     left: ${props => `${props.position.left}px`};
     cursor: pointer;
     z-index: 100;
+    background-color: ${props => `rgb(180, 200, 180, ${props.animation})`};
 `;
 
 const instrumentImages = {
@@ -81,14 +82,45 @@ const InstrumentComponent = ({
     limits,
     panControl,
     gainControl,
+    analyser,
     audioContext,
 }) => {
     const [position, setPosition] = useState({top: startPosition.top, left: startPosition.left});
+    const [animation, setAnimation] = useState(0)
+
+    // Analyser
+    const bufferLength = useMemo(() => analyser ? analyser.frequencyBinCount : 0, [analyser]);
+
+    useEffect(() => {
+        const timerID = setInterval( () => tick(), 100);
+
+        return function cleanup() {
+            clearInterval(timerID);
+        };
+    });
+
+   function tick() {
+       // TODO: Make animation follow amplitude of original signal and scale it from 0 to 1.
+
+       const dataArray = new Uint8Array(bufferLength);
+       if(analyser) {
+            analyser.getByteFrequencyData(dataArray); // NOTE: How could I get mean amplitude???
+        }
+
+       const mean = dataArray.length > 0 ? dataArray.reduce((acc, sum) => acc+sum, 0) / dataArray.length : 0;
+
+       if (mean > 0) {
+           animation > 0 ? setAnimation(0) : setAnimation(mean);
+       } else {
+           setAnimation(0);
+       }
+   }
 
     const onDragStart = e => {
         // NOTE: Trick to remove the drag ghost image
         e.dataTransfer.setDragImage(e.target, window.outerWidth, window.outerHeight);
     }
+
     const onDragOrDrop = e => {
         const newLeft = Number(e.clientX);
         const newTop = Number(e.clientY);
@@ -129,6 +161,7 @@ const InstrumentComponent = ({
             position={position}
             height={height}
             width={width}
+            animation={animation}
             draggable
         />
     );
