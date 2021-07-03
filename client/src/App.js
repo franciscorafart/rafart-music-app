@@ -8,7 +8,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Switch>
-          <Route path='/'>
+          <Route exact path='/'>
             <AppLanding />
             {/* <AlienationDance /> */}
           </Route>
