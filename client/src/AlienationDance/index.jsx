@@ -175,23 +175,24 @@ const AlienationDance = () => {
                 const instrumentsBackend = data.instruments;
                 processFiles(instrumentsBackend);
             });
-        } else {
-            (async () => {
-                const synthFile = await import('assets/synth.mp3');
-                const stickFile = await import('assets/stick.mp3');
-                const drumFile = await import('assets/drums.mp3');
-                const vox = await import('assets/vox.mp3');
-                const guitars = await import('assets/guitar.mp3');
-
-                processFiles([
-                    {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
-                    {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
-                    {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
-                    {name: 'Vox', key: 'vox', url: vox.default, 'start': 76.26163}, // Bar 35, first beat. 107bpm
-                    {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 65.04667}, // Bar 30, first beat. 107bpm
-                ]);
-            })();
         }
+        // } else {
+        //     (async () => {
+        //         const synthFile = await import('assets/synth.mp3');
+        //         const stickFile = await import('assets/stick.mp3');
+        //         const drumFile = await import('assets/drums.mp3');
+        //         const vox = await import('assets/vox.mp3');
+        //         const guitars = await import('assets/guitar.mp3');
+
+        //         processFiles([
+        //             {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
+        //             {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
+        //             {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
+        //             {name: 'Vox', key: 'vox', url: vox.default, 'start': 76.26163}, // Bar 35, first beat. 107bpm
+        //             {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 65.04667}, // Bar 30, first beat. 107bpm
+        //         ]);
+        //     })();
+        // }
     }, []);
 
     const playAll = () => {
