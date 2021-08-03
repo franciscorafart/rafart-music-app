@@ -6,8 +6,6 @@ import guitarImage from 'assets/Guitar.png';
 import synthImage from 'assets/Synth.png';
 import padImage from 'assets/Pad.png';
 import voxImage from 'assets/Vox.png';
-import bassImage from 'assets/Bass.png';
-import fxImage from 'assets/Fx.png';
 
 const Instrument = styled.img`
     height: ${props => `${props.height}`}px;
@@ -25,9 +23,7 @@ const Instrument = styled.img`
 const instrumentImages = {
     Stick: stickImage,
     Guitars: guitarImage,
-    Bass: bassImage,
-    Synths: synthImage,
-    FX: fxImage,
+    Synth: synthImage,
     Drums: padImage,
     Vox: voxImage,
 }

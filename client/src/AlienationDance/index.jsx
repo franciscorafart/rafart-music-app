@@ -54,6 +54,8 @@ const Mask = styled.img`
     position: absolute;
 `;
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const getFile = async (audioCtx, filepath) => {
     const response = await fetch(filepath);
     const arrayBuffer = await response.arrayBuffer();
@@ -92,9 +94,6 @@ const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
     var dataArray = new Uint8Array(bufferLength);
     analyser.getByteTimeDomainData(dataArray);
 
-    // Connect the source to be analysed
-    // source.connect(analyser);
-
     // Singal chain
     stemAudioSource.connect(analyser);
     analyser.connect(panNode);
@@ -110,8 +109,6 @@ const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
     const [displayDialog, setDisplayDialog] = useState(true);
-
-    // const isProduction = process.env.NODE_ENV === 'production';
 
     const [play, setPlay] = useState(0);
     const windowSize = useWindowSize();
@@ -143,7 +140,7 @@ const AlienationDance = () => {
 
         let allInstruments = {};
         for await (const [idx, inst] of insts.entries()) {
-            const {name, key, url} = inst;
+            const {name, key, url, start} = inst;
             await addAudioBuffer(Audio.context, url).then(buffer => {
                 allInstruments[key] = {
                     name: name,
@@ -151,7 +148,8 @@ const AlienationDance = () => {
                     panNode: undefined,
                     gainNode: undefined,
                     analyser: undefined,
-                    audioBuffer: buffer
+                    audioBuffer: buffer,
+                    start: start,
                 }
             });
         }
@@ -161,6 +159,8 @@ const AlienationDance = () => {
     // Load files from s3 (or local folder) and add them to buffer on initial render
     useEffect(() => {
         initializeMasterGain();
+
+        if (isProduction) {
             fetch('/get_audio_files', {
                 method: 'POST',
                 cache: 'no-cache',
@@ -175,26 +175,36 @@ const AlienationDance = () => {
                 const instrumentsBackend = data.instruments;
                 processFiles(instrumentsBackend);
             });
+        } else {
+            (async () => {
+                const synthFile = await import('assets/synth.mp3');
+                const stickFile = await import('assets/stick.mp3');
+                const drumFile = await import('assets/drums.mp3');
+                const vox = await import('assets/vox.mp3');
+                const guitars = await import('assets/guitar.mp3');
+
+                processFiles([
+                    {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
+                    {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
+                    {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
+                    {name: 'Vox', key: 'vox', url: vox.default, 'start': 76.26163}, // Bar 35, first beat. 107bpm
+                    {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 65.04667}, // Bar 30, first beat. 107bpm
+                ]);
+            })();
+        }
     }, []);
-
-    // Use in dev mode
-    // useEffect(() => {
-    //     initializeMasterGain();
-    //     (async () => {
-    //         // const synthFile = await import('assets/synth.mp3');
-    //         const stickFile = await import('assets/stick.mp3');
-    //         processFiles([
-    //             // {name: 'Synth', key: 'synth', url: synthFile.default},
-    //             {name: 'Stick', key: 'stick', url: stickFile.default}
-    //         ]);
-    //     })();
-    // }, []);
-
 
     const playAll = () => {
         const allInstruments = {}
+
         for (const [key, instrument] of Object.entries(instruments)){
-            const [panNode, gainNode, analyser] = playBuffer(Audio.context, Audio.masterGainNode, instrument.audioBuffer, 0);
+            const [panNode, gainNode, analyser] = playBuffer(
+                Audio.context, 
+                Audio.masterGainNode, 
+                instrument.audioBuffer, 
+                instrument.start,
+            ); // TODO: Define a specific time for each sample
+
             allInstruments[key] = {
                 ...instrument,
                 panNode: panNode,
@@ -215,7 +225,7 @@ const AlienationDance = () => {
 
     return(
         <Container>
-            <LogoContainer><img src={logoImage} width='200px'/></LogoContainer>
+            <LogoContainer><img src={logoImage} alt='Rafart logo' width='200px'/></LogoContainer>
             {!isNaN(mixerHeight) && !isNaN(mixerWidth) && <MixerContainer height={mixerHeight} width={mixerWidth} mixerPad={mixerPad}>
                 {Object.entries(instruments).map(([key, instrument]) => 
                     <InstrumentComponent
@@ -297,7 +307,7 @@ const AlienationDance = () => {
                             setPlay(play + 1)
                         }}
                         disabled={isEmpty(instruments)}
-                    >{'Start the experience'}</Button>
+                    >Start the experience</Button>
                 </Modal.Footer>
             </Modal>
             <StripeModal 

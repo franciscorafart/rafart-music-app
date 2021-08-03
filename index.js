@@ -61,13 +61,11 @@ app.post('/get_intent', (req, res) => {
 // Send audio files links from s3 to front end
 app.post('/get_audio_files', (_, res) => {
   const files = [
-    ['Stick', 'stick.mp3', 'stick'],
-    ['Guitars', 'guitar.mp3', 'guitar'],
-    ['Bass', 'bass.mp3', 'bass'],
-    ['Synths', 'synth.mp3', 'synth'],
-    ['FX', 'fx.mp3', 'fx'],
-    ['Drums', 'drums.mp3', 'drum'],
-    ['Vox', 'vox.mp3', 'vox'],
+    ['Synth', 'synth.mp3', 'synth', 0],
+    ['Stick', 'stick.mp3', 'stick', 0],
+    ['Drums', 'drums.mp3', 'drums', 0],
+    ['Vox', 'vox.mp3', 'vox', 76.26163],
+    ['Guitars', 'guitar.mp3', 'guitar', 65.04667],
   ];
 
   const response = [];
@@ -77,6 +75,7 @@ app.post('/get_audio_files', (_, res) => {
       const instrumentName = file[0];
       const filename = file[1];
       const instrumentKey = file[2];
+      const start = file[3];
       const url = retrieveFileUrlS3(filename);
 
       // TODO: Get image files from S3 as well.
@@ -85,6 +84,7 @@ app.post('/get_audio_files', (_, res) => {
         key: instrumentKey,
         name: instrumentName,
         url: url,
+        start: start,
       })
     }
   } catch (e) {
