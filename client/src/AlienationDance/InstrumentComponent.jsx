@@ -18,8 +18,9 @@ const Instrument = styled.img`
 const InstrumentWrapper = styled.div`
     height: ${props => `${props.height}`}px;
     width: ${props => `${props.width}`}px;
-    cursor: pointer;
+    cursor: move;
     z-index: 100;
+    float: left;
 `;
 
 const instrumentImages = {
@@ -83,7 +84,7 @@ const InstrumentComponent = ({
    }
 
     const onDrag = (_, d) => {
-        console.log('d', d)
+        console.log('x', d.x, 'y', d.y)
 
         // NOTE: if-statement is a temporary solution to avoid audio discontinuity when mouse moves too quickly.
         // if (Math.abs(newLeft - position.left) <= 120 && Math.abs(newTop - position.top) <= 120) {
@@ -102,12 +103,11 @@ const InstrumentComponent = ({
     }
 
     const image = instrumentImages[name];
-
+    // console.log('start x', startPosition.left, 'start y', startPosition.top)
     return(
         <Draggable
             axis='both'
             defaultPosition={{x: startPosition.left, y: startPosition.top}}
-            scale={1}
             onDrag={onDrag}
             bounds={{
                 left: limits.leftLimit, 
@@ -115,11 +115,11 @@ const InstrumentComponent = ({
                 right: limits.rightLimit, 
                 bottom: limits.bottomLimit,
             }}
-            // bounds='parent'
         >
              <InstrumentWrapper 
                 height={height}
                 width={width}
+                className='box'
             >
                 <Instrument 
                     src={image}

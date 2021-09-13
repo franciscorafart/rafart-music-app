@@ -20,7 +20,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
+    // margin-top: 20px;
     margin-bottom: 20px;
     background-color: black;
 `;
@@ -119,14 +119,6 @@ const AlienationDance = () => {
     const mixerWidth = width - (mixerPad*2);
     const mixerHeight = (360/640) * mixerWidth;
     const instrumentSize = 100;
-
-    const instrumentLimits = {
-        // rightLimit: width - mixerPad,
-        rightLimit: mixerWidth + mixerPad,
-        leftLimit: mixerPad,
-        topLimit: mixerPad, // What about the 
-        bottomLimit: mixerHeight + mixerPad,
-    }
 
     const videoRef = useRef(null);
 
@@ -230,21 +222,32 @@ const AlienationDance = () => {
         <Container>
             <LogoContainer><img src={logoImage} alt='Rafart logo' width='200px'/></LogoContainer>
             {!isNaN(mixerHeight) && !isNaN(mixerWidth) && <MixerContainer height={mixerHeight} width={mixerWidth} mixerPad={mixerPad}>
-                {Object.entries(instruments).map(([key, instrument]) => 
-                    <InstrumentComponent
-                        key={key}
-                        name={instrument.name}
-                        startPosition={instrument.startPosition}
-                        height={instrumentSize}
-                        width={instrumentSize}
-                        limits={instrumentLimits}
-                        panControl={instrument.panNode}
-                        gainControl={instrument.gainNode}
-                        analyser={instrument.analyser}
-                        audioContext={Audio.context}
-                    />
-                )}
-                <Video
+                {Object.entries(instruments).map(([key, instrument], idx) => {
+                    // NOTE: Not sure why this math needed. Limit depends on the starting position.
+                    const instrumentLimits = {
+                        rightLimit: mixerWidth - ((idx+1)*instrumentSize),
+                        leftLimit: 0 - (idx*instrumentSize),
+                        topLimit: 0,
+                        bottomLimit: mixerHeight - instrumentSize,
+                        leftOffset: idx*instrumentSize, // NOTE: To calculate absolute position in the container.
+                    }
+
+                    return (
+                        <InstrumentComponent
+                            key={key}
+                            name={instrument.name}
+                            startPosition={instrument.startPosition}
+                            height={instrumentSize}
+                            width={instrumentSize}
+                            limits={instrumentLimits}
+                            panControl={instrument.panNode}
+                            gainControl={instrument.gainNode}
+                            analyser={instrument.analyser}
+                            audioContext={Audio.context}
+                        />
+                    );            
+                })}
+                {/* <Video
                     ref={videoRef}
                     height={mixerHeight}
                     width={mixerWidth}
@@ -252,7 +255,7 @@ const AlienationDance = () => {
                     playsInline
                     loop
                     src='https://player.vimeo.com/external/544030006.hd.mp4?s=04cde03295c6b6cd31aede65f0c6d2ad0b3614ad&profile_id=175   '
-                />
+                /> */}
                 {/* <Mask 
                     height={mixerHeight}
                     width={mixerWidth}
