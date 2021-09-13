@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import styled from 'styled-components';
+import Draggable from 'react-draggable';
 
 import stickImage from 'assets/Stick.png';
 import guitarImage from 'assets/Guitar.png';
@@ -8,16 +9,17 @@ import padImage from 'assets/Pad.png';
 import voxImage from 'assets/Vox.png';
 
 const Instrument = styled.img`
-    height: ${props => `${props.height}`}px;
-    width: ${props => `${props.width}`}px;
     border-radius: 50%; 
     border: 1px solid gray;
-    position: absolute;
-    top: ${props => `${props.position.top}px`};
-    left: ${props => `${props.position.left}px`};
+    pointer-events: none;
+    background-color: ${props => `rgb(180, 200, 180, ${props.animation})`};
+`;
+
+const InstrumentWrapper = styled.div`
+    height: ${props => `${props.height}`}px;
+    width: ${props => `${props.width}`}px;
     cursor: pointer;
     z-index: 100;
-    background-color: ${props => `rgb(180, 200, 180, ${props.animation})`};
 `;
 
 const instrumentImages = {
@@ -26,37 +28,6 @@ const instrumentImages = {
     Synth: synthImage,
     Drums: padImage,
     Vox: voxImage,
-}
-
-const inContainer = (
-    position, 
-    height, 
-    width,
-    limits,
-) => {
-    let horizontal = 0;
-    if (position.left < limits.leftLimit){
-        horizontal = limits.leftLimit
-    } else if (position.left + width > limits.rightLimit) {
-        horizontal = limits.rightLimit - width;
-    } else {
-        horizontal = position.left;
-    }
-
-    let vertical = 0;
-
-    if (position.top < limits.topLimit) {
-        vertical = limits.topLimit;
-    } else if (position.top + height > limits.bottomLimit) {
-        vertical = limits.bottomLimit - height;
-    } else {
-        vertical = position.top;
-    }
-
-    return {
-        left: horizontal,
-        top: vertical,
-    }
 }
 
 const positionToPanGainTuple = (position, width, height, limits) => {
@@ -81,7 +52,6 @@ const InstrumentComponent = ({
     analyser,
     audioContext,
 }) => {
-    const [position, setPosition] = useState({top: startPosition.top, left: startPosition.left});
     const [animation, setAnimation] = useState(0)
 
     // Analyser
@@ -112,27 +82,13 @@ const InstrumentComponent = ({
        }
    }
 
-    const onDragStart = e => {
-        // NOTE: Trick to remove the drag ghost image
-        e.dataTransfer.setDragImage(e.target, window.outerWidth, window.outerHeight);
-    }
-
-    const onDragOrDrop = e => {
-        const newLeft = Number(e.clientX);
-        const newTop = Number(e.clientY);
+    const onDrag = (_, d) => {
+        console.log('d', d)
 
         // NOTE: if-statement is a temporary solution to avoid audio discontinuity when mouse moves too quickly.
-        if (Math.abs(newLeft - position.left) <= 120 && Math.abs(newTop - position.top) <= 120) {
-            const positionInContainer = inContainer(
-                {left: newLeft, top: newTop},
-                height,
-                width,
-                limits,
-            );
-
-            setPosition(positionInContainer);
-
-            const [pan, gain] = positionToPanGainTuple(positionInContainer, width, height, limits);
+        // if (Math.abs(newLeft - position.left) <= 120 && Math.abs(newTop - position.top) <= 120) {
+            const position = {left: d.x, top: d.y};
+            const [pan, gain] = positionToPanGainTuple(position, width, height, limits);
 
             // TODO: Can I get the audio context in a cleaner way?
             if (panControl){
@@ -142,24 +98,37 @@ const InstrumentComponent = ({
             if (gainControl) {
                 gainControl.gain.setValueAtTime(gain, audioContext.currentTime);
             }
-        }
-
+        // }
     }
-    
+
     const image = instrumentImages[name];
 
     return(
-        <Instrument 
-            src={image}
-            onDrag={onDragOrDrop}
-            onDragStart={onDragStart} // Note: Remove ghost image
-            onDragEnd={onDragOrDrop}
-            position={position}
-            height={height}
-            width={width}
-            animation={animation}
-            draggable
-        />
+        <Draggable
+            axis='both'
+            defaultPosition={{x: startPosition.left, y: startPosition.top}}
+            scale={1}
+            onDrag={onDrag}
+            bounds={{
+                left: limits.leftLimit, 
+                top: limits.topLimit, 
+                right: limits.rightLimit, 
+                bottom: limits.bottomLimit,
+            }}
+            // bounds='parent'
+        >
+             <InstrumentWrapper 
+                height={height}
+                width={width}
+            >
+                <Instrument 
+                    src={image}
+                    animation={animation}
+                    height={height}
+                    width={width}
+                />
+             </InstrumentWrapper>
+        </Draggable>
     );
 };
 

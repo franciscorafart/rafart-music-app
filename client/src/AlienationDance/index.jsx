@@ -26,13 +26,14 @@ const Container = styled.div`
 `;
 
 const LogoContainer = styled.div`
-    width: 200px;
+    width: 200px; 
 `;
 
 const MixerContainer = styled.div`
     margin: ${props => props.mixerPad}px 0 ${props => props.mixerPad}px 0;
     width: ${props => `${props.width}px`};
     height: ${props => `${props.height}px`};
+    border: 1px solid green;
 `;
 
 const ButtonsContainer = styled.div`
@@ -120,9 +121,10 @@ const AlienationDance = () => {
     const instrumentSize = 100;
 
     const instrumentLimits = {
-        rightLimit: width - mixerPad,
+        // rightLimit: width - mixerPad,
+        rightLimit: mixerWidth + mixerPad,
         leftLimit: mixerPad,
-        topLimit: mixerPad,
+        topLimit: mixerPad, // What about the 
         bottomLimit: mixerHeight + mixerPad,
     }
 
@@ -175,24 +177,24 @@ const AlienationDance = () => {
                 const instrumentsBackend = data.instruments;
                 processFiles(instrumentsBackend);
             });
-        }
-        // } else {
-        //     (async () => {
-        //         const synthFile = await import('assets/synth.mp3');
-        //         const stickFile = await import('assets/stick.mp3');
-        //         const drumFile = await import('assets/drums.mp3');
-        //         const vox = await import('assets/vox.mp3');
-        //         const guitars = await import('assets/guitar.mp3');
-
-        //         processFiles([
-        //             {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
-        //             {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
-        //             {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
-        //             {name: 'Vox', key: 'vox', url: vox.default, 'start': 76.26163}, // Bar 35, first beat. 107bpm
-        //             {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 65.04667}, // Bar 30, first beat. 107bpm
-        //         ]);
-        //     })();
         // }
+        } else {
+            (async () => {
+                const synthFile = await import('assets/synth.mp3');
+                const stickFile = await import('assets/stick.mp3');
+                const drumFile = await import('assets/drums.mp3');
+                const vox = await import('assets/vox.mp3');
+                const guitars = await import('assets/guitar.mp3');
+
+                processFiles([
+                    {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
+                    {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
+                    {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
+                    {name: 'Vox', key: 'vox', url: vox.default, 'start': 76.26163}, // Bar 35, first beat. 107bpm
+                    {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 65.04667}, // Bar 30, first beat. 107bpm
+                ]);
+            })();
+        }
     }, []);
 
     const playAll = () => {
@@ -242,12 +244,6 @@ const AlienationDance = () => {
                         audioContext={Audio.context}
                     />
                 )}
-                <Mask 
-                    height={mixerHeight}
-                    width={mixerWidth}
-                    mixerPad={mixerPad}
-                    src={mask} 
-                />
                 <Video
                     ref={videoRef}
                     height={mixerHeight}
@@ -257,7 +253,14 @@ const AlienationDance = () => {
                     loop
                     src='https://player.vimeo.com/external/544030006.hd.mp4?s=04cde03295c6b6cd31aede65f0c6d2ad0b3614ad&profile_id=175   '
                 />
+                {/* <Mask 
+                    height={mixerHeight}
+                    width={mixerWidth}
+                    mixerPad={mixerPad}
+                    src={mask} 
+                /> */}
             </MixerContainer>}
+            
             <ButtonsContainer>
                 <Button
                     onClick={() => {
