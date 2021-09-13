@@ -31,14 +31,10 @@ const instrumentImages = {
     Vox: voxImage,
 }
 
-const positionToPanGainTuple = (position, width, height, limits) => {
-    // TODO: Fix math to make numbers exact
-    const mixerWidth = limits.rightLimit - limits.leftLimit;
-    const mixerHeight = limits.bottomLimit - limits.topLimit;
-    const pan = parseFloat((((position.left - limits.leftLimit - (width/2)) / mixerWidth) * 2) - 1);
-    const gain = parseFloat((((position.top - limits.topLimit - (height/2)) / mixerHeight) * -1) + 1);
+const positionToPanGainTuple = (position, width, height, mixerWidth, mixerHeight) => {
+    const pan = parseFloat(((position.left / (mixerWidth - width)) * 2) - 1);
+    const gain = parseFloat(((position.top / (mixerHeight - height)) * -1) + 1);
 
-    // console.log('pan', pan, 'gain', gain)
     return [pan, gain]
 }
 
@@ -52,6 +48,8 @@ const InstrumentComponent = ({
     gainControl,
     analyser,
     audioContext,
+    mixerWidth,
+    mixerHeight,
 }) => {
     const [animation, setAnimation] = useState(0)
 
@@ -68,7 +66,6 @@ const InstrumentComponent = ({
 
    function tick() {
        // TODO: Make animation follow amplitude of original signal and scale it from 0 to 1.
-
        const dataArray = new Uint8Array(bufferLength);
        if(analyser) {
             analyser.getByteFrequencyData(dataArray); // NOTE: How could I get mean amplitude???
@@ -84,12 +81,13 @@ const InstrumentComponent = ({
    }
 
     const onDrag = (_, d) => {
-        console.log('x', d.x, 'y', d.y)
-
         // NOTE: if-statement is a temporary solution to avoid audio discontinuity when mouse moves too quickly.
         // if (Math.abs(newLeft - position.left) <= 120 && Math.abs(newTop - position.top) <= 120) {
-            const position = {left: d.x, top: d.y};
-            const [pan, gain] = positionToPanGainTuple(position, width, height, limits);
+
+            // Absolute position for mixer considering left offset
+            const absolutePosition = {left: d.x + limits.leftOffset, top: d.y}
+            console.log('absolutePosition', absolutePosition)
+            const [pan, gain] = positionToPanGainTuple(absolutePosition, width, height, mixerWidth, mixerHeight);
 
             // TODO: Can I get the audio context in a cleaner way?
             if (panControl){
@@ -103,7 +101,7 @@ const InstrumentComponent = ({
     }
 
     const image = instrumentImages[name];
-    // console.log('start x', startPosition.left, 'start y', startPosition.top)
+
     return(
         <Draggable
             axis='both'

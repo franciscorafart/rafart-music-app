@@ -244,6 +244,8 @@ const AlienationDance = () => {
                             gainControl={instrument.gainNode}
                             analyser={instrument.analyser}
                             audioContext={Audio.context}
+                            mixerWidth={mixerWidth}
+                            mixerHeight={mixerHeight}
                         />
                     );            
                 })}
