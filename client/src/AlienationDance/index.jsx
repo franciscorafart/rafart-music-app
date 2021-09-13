@@ -20,7 +20,6 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    // margin-top: 20px;
     margin-bottom: 20px;
     background-color: black;
 `;
@@ -34,7 +33,6 @@ const LogoContainer = styled.div`
 const MixerContainer = styled.div`
     width: ${props => `${props.width}px`};
     height: ${props => `${props.height}px`};
-    border: 1px solid green;
 `;
 
 const ButtonsContainer = styled.div`
@@ -54,8 +52,9 @@ const Video = styled.video`
 const Mask = styled.img`
     width: ${props => `${props.width}px`};
     height: ${props => `${props.height}px`};
-    z-index: 10;
     position: absolute;
+    top: ${props => `${props.logoContainerHeight}px`};
+    left: ${props => `${props.marginPad}px`};
 `;
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -255,6 +254,14 @@ const AlienationDance = () => {
                     loop
                     src='https://player.vimeo.com/external/544030006.hd.mp4?s=04cde03295c6b6cd31aede65f0c6d2ad0b3614ad&profile_id=175   '
                 />
+                <Mask 
+                    height={mixerHeight}
+                    width={mixerWidth}
+                    mixerPad={mixerPad}
+                    src={mask} 
+                    logoContainerHeight={logoContainerHeight+1}
+                    marginPad={mixerPad}
+                />
 
                 {Object.entries(instruments).map(([key, instrument], idx) => {
                     // NOTE: Not sure why this math needed. Limit depends on the starting position.
@@ -283,12 +290,7 @@ const AlienationDance = () => {
                         />
                     );            
                 })}
-                {/* <Mask 
-                    height={mixerHeight}
-                    width={mixerWidth}
-                    mixerPad={mixerPad}
-                    src={mask} 
-                /> */}
+                
             </MixerContainer>}
             
             <ButtonsContainer>
