@@ -19,7 +19,7 @@ const InstrumentWrapper = styled.div`
     height: ${props => `${props.height}`}px;
     width: ${props => `${props.width}`}px;
     cursor: move;
-    z-index: 100;
+    z-index: 200;
     float: left;
 `;
 
@@ -81,12 +81,9 @@ const InstrumentComponent = ({
    }
 
     const onDrag = (_, d) => {
-        // NOTE: if-statement is a temporary solution to avoid audio discontinuity when mouse moves too quickly.
-        // if (Math.abs(newLeft - position.left) <= 120 && Math.abs(newTop - position.top) <= 120) {
-
             // Absolute position for mixer considering left offset
             const absolutePosition = {left: d.x + limits.leftOffset, top: d.y}
-            console.log('absolutePosition', absolutePosition)
+
             const [pan, gain] = positionToPanGainTuple(absolutePosition, width, height, mixerWidth, mixerHeight);
 
             // TODO: Can I get the audio context in a cleaner way?
@@ -97,7 +94,6 @@ const InstrumentComponent = ({
             if (gainControl) {
                 gainControl.gain.setValueAtTime(gain, audioContext.currentTime);
             }
-        // }
     }
 
     const image = instrumentImages[name];
@@ -117,7 +113,6 @@ const InstrumentComponent = ({
              <InstrumentWrapper 
                 height={height}
                 width={width}
-                className='box'
             >
                 <Instrument 
                     src={image}
