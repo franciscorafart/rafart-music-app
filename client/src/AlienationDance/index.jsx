@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState, useMemo} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
@@ -73,7 +73,6 @@ const AlienationDance = () => {
 
     const mixerWidth = width - (mixerPad*2);
     const mixerHeight = (360/640) * mixerWidth;
-    const instrumentSize = 100;
 
     const videoRef = useRef(null);
 
@@ -86,9 +85,10 @@ const AlienationDance = () => {
     }
 
     const device = width > 1100 ? 'desktop' : width > 678 ? 'tablet': 'mobile';
+    const instrumentSize = useMemo(() => device === 'mobile' ? 40 : 100, [device]);
 
     const processFiles = useCallback(async (insts) => {
-        const spread = device === "desktop" ? 120 : 35;
+        const spread = device === 'desktop' ? 120 : device === 'tablet'? 35 : 20;
 
         if (!isNaN(mixerWidth)) {
             let allInstruments = {};
@@ -111,10 +111,13 @@ const AlienationDance = () => {
         
     }, [mixerWidth, mixerHeight, instrumentSize, device]);
 
+    useEffect(() => {
+        initializeMasterGain();
+    }, []);
+
     // Load files from s3 (or local folder) and add them to buffer on initial render
     useEffect(() => {
-        if (windowSize && device !== 'mobile') {
-            initializeMasterGain();
+        if (windowSize) {
             if (isProduction) {
                 fetch('/get_audio_files', {
                     method: 'POST',
@@ -272,15 +275,15 @@ const AlienationDance = () => {
                         Alienation Dance - Interactive Music Experience
                     </Modal.Title>
                 </Modal.Header>
-                {device === 'mobile' && <Modal.Body>
+                {/* {device === 'mobile' && <Modal.Body>
                     <p>This experience was designed for a larger screen such as a desktop and tablet.</p>
                     <p>Open the link on another device</p>
-                </Modal.Body>}
-                {device !== 'mobile' && <>
+                </Modal.Body>} */}
+                {device && <>
                     <Modal.Body>
                     <p>Alienation Dance is an interactive song</p>
                     <p>Do your own mix by dragging the icons: Pan left to right, change volume levels up and down</p>
-                    <p>For a better experience <strong>wear headphones</strong></p>
+                    <p>For a better experience <strong>wear headphones</strong> and <strong>use a Desktop computer</strong></p>
                     <br/>
                     <p>Please support this project by clicking on the <strong>Donate</strong> button on the next screen. All transactions are encrypted and powered by Stripe. </p>
                     <br/>
