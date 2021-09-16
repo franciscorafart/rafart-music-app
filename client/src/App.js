@@ -12,7 +12,7 @@ function App() {
           <Route exact path='/'>
             <AppLanding />
           </Route>
-          <Route path='the-great-refusal'>
+          <Route path='/the-great-refusal'>
             <TheGreatRefusal/>
           </Route>
           <Route path='/alienation-dance'>

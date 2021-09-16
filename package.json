@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Backend for rafart music app",
   "main": "index.js",
+  "engine": {
+    "node": "12.16"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",

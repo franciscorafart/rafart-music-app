@@ -2,6 +2,9 @@
   "name": "rafart-music-app",
   "version": "0.1.0",
   "private": true,
+  "engine": {
+    "node": "12.16"
+  },
   "dependencies": {
     "@stripe/react-stripe-js": "^1.4.0",
     "@stripe/stripe-js": "^1.13.2",
