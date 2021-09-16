@@ -12,6 +12,8 @@ import Audio from './AudioEngine';
 import StripeModal from 'StripeModal';
 import styled from 'styled-components';
 
+import {addAudioBuffer, playBuffer} from './audioUtils';
+
 // Files
 import logoImage  from 'assets/logo.png';
 import mask from 'assets/Mask.png'
@@ -59,56 +61,6 @@ const Mask = styled.img`
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-const getFile = async (audioCtx, filepath) => {
-    const response = await fetch(filepath);
-    const arrayBuffer = await response.arrayBuffer();
-    let audioBuffer;
-    try {
-        audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-    } catch (e){
-        console.error(e)
-    }
-
-    return audioBuffer;
-}
-
-const addAudioBuffer = async (audioCtx, filepath) => {
-    const buffer = await getFile(audioCtx, filepath);
-    return buffer;
-}
-
-const playBuffer = (audioCtx, masterGainNode, buffer, time) => {
-    const stemAudioSource = audioCtx.createBufferSource();
-    stemAudioSource.buffer = buffer;
-
-    const panNode = audioCtx.createStereoPanner();
-    panNode.pan.setValueAtTime(0, audioCtx.currentTime);
-
-    const stemGainNode = audioCtx.createGain();
-    stemGainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-
-    const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 2048;
-    // analyser.fftSize = 126;
-
-    const bufferLength = analyser.frequencyBinCount;
-
-    // NOTE: Maybe I don't need this here?
-    var dataArray = new Uint8Array(bufferLength);
-    analyser.getByteTimeDomainData(dataArray);
-
-    // Singal chain
-    stemAudioSource.connect(analyser);
-    analyser.connect(panNode);
-    panNode.connect(stemGainNode);
-    stemGainNode.connect(masterGainNode);
-
-    stemAudioSource.start(time);
-
-    // Return gain and panning controls so that the UI can manipulate them
-    return [panNode, stemGainNode, analyser];
-}
-
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
     const [displayDialog, setDisplayDialog] = useState(true);
@@ -133,11 +85,9 @@ const AlienationDance = () => {
         Audio.masterGainNode.gain.setValueAtTime(1, Audio.context.currentTime);
     }
 
-    const device = width > 769 ? 'desktop' : width > 678 ? 'tablet': 'mobile';
+    const device = width > 1100 ? 'desktop' : width > 678 ? 'tablet': 'mobile';
 
     const processFiles = useCallback(async (insts) => {
-        // If mixer widht???
-        console.log('mixerWidth', mixerWidth)
         const spread = device === "desktop" ? 120 : 35;
 
         if (!isNaN(mixerWidth)) {
@@ -264,7 +214,7 @@ const AlienationDance = () => {
                 />
 
                 {Object.entries(instruments).map(([key, instrument], idx) => {
-                    // NOTE: Not sure why this math needed. Limit depends on the starting position.
+                    // NOTE: math needed because limit depends on the starting position.
                     const instrumentLimits = {
                         rightLimit: mixerWidth - ((idx+1)*instrumentSize),
                         leftLimit: 0 - (idx*instrumentSize),
@@ -311,7 +261,7 @@ const AlienationDance = () => {
                 }>{play % 2 === 0 ? 'Play' : 'Pause'}</Button>
                 <Button
                     onClick={() => setDisplayForm(true)}
-                >Support this project</Button>
+                >Donate</Button>
             </ButtonsContainer>
             <Modal
                 show={displayDialog}
@@ -328,13 +278,14 @@ const AlienationDance = () => {
                 </Modal.Body>}
                 {device !== 'mobile' && <>
                     <Modal.Body>
-                    <p>Alienation Dance is an interactive song released as web app musical experience.</p>
-                    <p>You can live mix the song by dragging the instrument icons on the surface, panning left and right, and changing levels up and down</p>
-                    
+                    <p>Alienation Dance is an interactive song</p>
+                    <p>Do your own mix by dragging the icons: Pan left to right, change volume levels up and down</p>
+                    <p>For a better experience <strong>wear headphones</strong></p>
+                    <br/>
                     <p>Please support this project by clicking on the <strong>Donate</strong> button on the next screen. All transactions are encrypted and powered by Stripe. </p>
-
+                    <br/>
                     <p>This project is part of The Great Refusal, a live music experience funded by the Live Arts Boston 2020 grant by the Boston Foundation</p>
-
+                    <br/>
                     <p>Thanks and enjoy!</p>
                     <p>Rafart</p>
                 </Modal.Body>

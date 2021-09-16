@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import AppLanding from './AppLanding';
 import AlienationDance from './AlienationDance';
+import TheGreatRefusal from './TheGreatRefusal';
 
 function App() {
   return (
@@ -10,7 +11,9 @@ function App() {
         <Switch>
           <Route exact path='/'>
             <AppLanding />
-            {/* <AlienationDance /> */}
+          </Route>
+          <Route path='the-great-refusal'>
+            <TheGreatRefusal/>
           </Route>
           <Route path='/alienation-dance'>
             <AlienationDance />
