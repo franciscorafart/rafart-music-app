@@ -64,6 +64,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
     const [displayDialog, setDisplayDialog] = useState(true);
+    const [audioActive, setAudioActive] = useState(false);
+    const [instrumentData, setInstrumentData] = useState(undefined);
 
     const [play, setPlay] = useState(0);
     const windowSize = useWindowSize();
@@ -79,13 +81,16 @@ const AlienationDance = () => {
     // Audio
     const [instruments, setInstruments] = useState({});
 
-    const initializeMasterGain = () => {
-        Audio.masterGainNode.connect(Audio.context.destination);
-        Audio.masterGainNode.gain.setValueAtTime(1, Audio.context.currentTime);
-    }
-
     const device = width > 1100 ? 'desktop' : width > 678 ? 'tablet': 'mobile';
     const instrumentSize = useMemo(() => device === 'mobile' ? 40 : 100, [device]);
+
+    // NOTE: For desktop, we initialize web audio automatically
+    useEffect(() => {
+        if (device === 'desktop') {
+            Audio.initializeMasterGain();
+            setAudioActive(true);
+        }
+    }, [device]);
 
     const processFiles = useCallback(async (insts) => {
         const spread = device === 'desktop' ? 120 : device === 'tablet'? 35 : 20;
@@ -111,10 +116,6 @@ const AlienationDance = () => {
         
     }, [mixerWidth, mixerHeight, instrumentSize, device]);
 
-    useEffect(() => {
-        initializeMasterGain();
-    }, []);
-
     // Load files from s3 (or local folder) and add them to buffer on initial render
     useEffect(() => {
         if (windowSize) {
@@ -130,8 +131,7 @@ const AlienationDance = () => {
                 })
                 .then((response) => response.json())
                 .then((data) => {
-                    const instrumentsBackend = data.instruments;
-                    processFiles(instrumentsBackend);
+                    setInstrumentData(data.instruments); 
                 });
             }
             // } else {
@@ -142,7 +142,7 @@ const AlienationDance = () => {
             //         const vox = await import('assets/vox.mp3');
             //         const guitars = await import('assets/guitar.mp3');
 
-            //         processFiles([
+            //         setInstrumentData([
             //             {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
             //             {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
             //             {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
@@ -153,7 +153,13 @@ const AlienationDance = () => {
             // }
         }
         
-    }, [processFiles, windowSize, device]);
+    }, [windowSize, device]);
+
+    useEffect(() => {
+        if (audioActive && instrumentData) {
+            processFiles(instrumentData);
+        }
+    }, [instrumentData, audioActive]);
 
     const playAll = () => {
         const allInstruments = {}
@@ -272,26 +278,36 @@ const AlienationDance = () => {
             >
                 <Modal.Header>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Alienation Dance - Interactive Music Experience
+                        Alienation Dance <br/>
+                        <h4>Interactive Music Experience</h4>
                     </Modal.Title>
                 </Modal.Header>
-                {/* {device === 'mobile' && <Modal.Body>
-                    <p>This experience was designed for a larger screen such as a desktop and tablet.</p>
-                    <p>Open the link on another device</p>
-                </Modal.Body>} */}
-                {device && <>
+                {!audioActive && <Modal.Body>
+                    <p>Please activate your audio</p>
+                    <Button
+                        onClick={() => {
+                            // Mobile devices require manual initialization of web audio
+                            Audio.initializeMasterGain();
+                            setAudioActive(true);
+                        }}
+                    >Activate Audio</Button>
+                </Modal.Body>}
+                {audioActive && <>
                     <Modal.Body>
-                    <p>Alienation Dance is an interactive song</p>
-                    <p>Do your own mix by dragging the icons: Pan left to right, change volume levels up and down</p>
-                    <p>For a better experience <strong>wear headphones</strong> and <strong>use a Desktop computer</strong></p>
-                    <br/>
-                    <p>Please support this project by clicking on the <strong>Donate</strong> button on the next screen. All transactions are encrypted and powered by Stripe. </p>
-                    <br/>
-                    <p>This project is part of The Great Refusal, a live music experience funded by the Live Arts Boston 2020 grant by the Boston Foundation</p>
-                    <br/>
-                    <p>Thanks and enjoy!</p>
-                    <p>Rafart</p>
-                </Modal.Body>
+                        <p>Alienation Dance is an interactive song built as a web application.</p>
+                        <h5>Make your own mix</h5>
+                        <p>
+                            Drag the icons Left and Right to <strong>pan</strong>, and
+                            Up and Down to <strong>change volume.</strong>
+                        </p>
+                        <p>For a better experience <strong>wear headphones</strong> and use a<strong> Desktop computer.</strong></p>
+                        <h5>Support</h5>
+                        <p>Please support this project by clicking on the <strong>Donate</strong> button on the next screen. All transactions are encrypted and powered by Stripe. </p>
+                        <br/>
+                        <p>This project is part of The Great Refusal, a live music experience funded by the Live Arts Boston 2020 grant by the Boston Foundation</p>
+                        <br/>
+                        <p>Thanks and enjoy! - Rafart</p>
+                    </Modal.Body>
                 <Modal.Footer>
                     {isEmpty(instruments) && <Spinner animation="border" />}
                     <Button
