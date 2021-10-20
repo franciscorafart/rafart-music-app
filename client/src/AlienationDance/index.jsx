@@ -43,6 +43,7 @@ const ButtonsContainer = styled.div`
     align-items: center;
     width: 30%;
     padding: 20px 0 20px 0;
+    gap: ${props => props.mobile ? '10px' : '0'}
 `;
 
 const Video = styled.video`
@@ -146,20 +147,19 @@ const AlienationDance = () => {
             //             {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
             //             {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
             //             {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
-            //             {name: 'Vox', key: 'vox', url: vox.default, 'start': 76.26163}, // Bar 35, first beat. 107bpm
-            //             {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 65.04667}, // Bar 30, first beat. 107bpm
+            //             {name: 'Vox', key: 'vox', url: vox.default, 'start': 0},
+            //             {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 0},
             //         ]);
             //     })();
             // }
         }
-        
     }, [windowSize, device]);
 
     useEffect(() => {
         if (audioActive && instrumentData) {
             processFiles(instrumentData);
         }
-    }, [instrumentData, audioActive]);
+    }, [instrumentData, audioActive, processFiles]);
 
     const playAll = () => {
         const allInstruments = {}
@@ -252,7 +252,7 @@ const AlienationDance = () => {
                 
             </MixerContainer>}
             
-            <ButtonsContainer>
+            <ButtonsContainer mobile={device === 'mobile'}>
                 <Button
                     onClick={() => {
                         if (play === 0){
