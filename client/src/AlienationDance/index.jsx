@@ -26,10 +26,26 @@ const Container = styled.div`
     background-color: black;
 `;
 
+const ArrowContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+const ArrowText = styled.span`
+    font-size: 0.7em;
+    color: #d3dded;
+`;
+
 const LogoContainer = styled.div`
     height: 100px;
     height: ${props => `${props.logoContainerHeight}px`};
-    width: 200px; 
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5px;
+    row-gap: 5px;
 `;
 
 const MixerContainer = styled.div`
@@ -112,9 +128,9 @@ const AlienationDance = () => {
                     }
                 });
             }
-            setInstruments(allInstruments);   
+            setInstruments(allInstruments);
         }
-        
+
     }, [mixerWidth, mixerHeight, instrumentSize, device]);
 
     // Load files from s3 (or local folder) and add them to buffer on initial render
@@ -132,7 +148,7 @@ const AlienationDance = () => {
                 })
                 .then((response) => response.json())
                 .then((data) => {
-                    setInstrumentData(data.instruments); 
+                    setInstrumentData(data.instruments);
                 });
             }
             // } else {
@@ -166,9 +182,9 @@ const AlienationDance = () => {
 
         for (const [key, instrument] of Object.entries(instruments)){
             const [panNode, gainNode, analyser] = playBuffer(
-                Audio.context, 
-                Audio.masterGainNode, 
-                instrument.audioBuffer, 
+                Audio.context,
+                Audio.masterGainNode,
+                instrument.audioBuffer,
                 instrument.start,
             ); // TODO: Define a specific time for each sample
 
@@ -195,11 +211,15 @@ const AlienationDance = () => {
             <LogoContainer
                 logoContainerHeight={logoContainerHeight}
             >
-                <img 
-                    src={logoImage} 
-                    alt='Rafart logo' 
+                <img
+                    src={logoImage}
+                    alt='Rafart logo'
                     width='200px'
                 />
+                <ArrowContainer>
+                    <ArrowText>Drag icons ← and → for panning.</ArrowText>
+                    <ArrowText>Drag icons ↑ and ↓ for levels </ArrowText>
+                </ArrowContainer>
             </LogoContainer>
             {!isNaN(mixerHeight) && !isNaN(mixerWidth) && <MixerContainer height={mixerHeight} width={mixerWidth} mixerPad={mixerPad}>
                 <Video
@@ -213,11 +233,11 @@ const AlienationDance = () => {
                     loop
                     src='https://player.vimeo.com/external/544030006.hd.mp4?s=04cde03295c6b6cd31aede65f0c6d2ad0b3614ad&profile_id=175   '
                 />
-                <Mask 
+                <Mask
                     height={mixerHeight}
                     width={mixerWidth}
                     mixerPad={mixerPad}
-                    src={mask} 
+                    src={mask}
                     logoContainerHeight={logoContainerHeight+1}
                     marginPad={mixerPad}
                 />
@@ -247,11 +267,11 @@ const AlienationDance = () => {
                             mixerWidth={mixerWidth}
                             mixerHeight={mixerHeight}
                         />
-                    );            
+                    );
                 })}
-                
+
             </MixerContainer>}
-            
+
             <ButtonsContainer mobile={device === 'mobile'}>
                 <Button
                     onClick={() => {
@@ -278,8 +298,8 @@ const AlienationDance = () => {
             >
                 <Modal.Header>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Alienation Dance <br/>
-                        <h4>Interactive Music Experience</h4>
+                        The Alienation Dance
+                        <h6>An Interactive Music Experience by Rafart</h6>
                     </Modal.Title>
                 </Modal.Header>
                 {!audioActive && <Modal.Body>
@@ -294,17 +314,17 @@ const AlienationDance = () => {
                 </Modal.Body>}
                 {audioActive && <>
                     <Modal.Body>
-                        <p>Alienation Dance is an interactive song built as a web application.</p>
-                        <h5>Make your own mix</h5>
+                        {/* <p>Alienation Dance is an interactive song built as a web application.</p> */}
+                        {/* <h5>Make your own mix</h5>
                         <p>
                             Drag the icons Left and Right to <strong>pan</strong>, and
                             Up and Down to <strong>change volume.</strong>
-                        </p>
+                        </p> */}
                         <p>For a better experience <strong>wear headphones</strong> and use a<strong> Desktop computer.</strong></p>
-                        <h5>Support</h5>
+                        <h6>Support</h6>
                         <p>Please support this project by clicking on the <strong>Donate</strong> button on the next screen. All transactions are encrypted and powered by Stripe. </p>
-                        <br/>
-                        <p>This project is part of The Great Refusal, a live music experience funded by the Live Arts Boston 2020 grant by the Boston Foundation</p>
+                        <h6>Acknowledgements</h6>
+                        <p>This project is part of The Great Refusal, a live music experience funded by the Live Arts Boston 2020 grant by the Boston Foundation.</p>
                         <br/>
                         <p>Thanks and enjoy! - Rafart</p>
                     </Modal.Body>
@@ -321,7 +341,7 @@ const AlienationDance = () => {
                     >Start the experience</Button>
                 </Modal.Footer></>}
             </Modal>
-            <StripeModal 
+            <StripeModal
                 open={displayForm}
                 handleClose={handleStripeModalClose}
             />

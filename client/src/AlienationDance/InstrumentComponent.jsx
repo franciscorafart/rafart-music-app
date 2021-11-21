@@ -9,7 +9,7 @@ import padImage from 'assets/Pad.png';
 import voxImage from 'assets/Vox.png';
 
 const Instrument = styled.img`
-    border-radius: 50%; 
+    border-radius: 50%;
     border: 1px solid gray;
     pointer-events: none;
     background-color: ${props => `rgb(180, 200, 180, ${props.animation})`};
@@ -39,9 +39,9 @@ const positionToPanGainTuple = (position, width, height, mixerWidth, mixerHeight
 }
 
 const InstrumentComponent = ({
-    name, 
-    startPosition, 
-    height, 
+    name,
+    startPosition,
+    height,
     width,
     limits,
     panControl,
@@ -104,17 +104,17 @@ const InstrumentComponent = ({
             defaultPosition={{x: startPosition.left, y: startPosition.top}}
             onDrag={onDrag}
             bounds={{
-                left: limits.leftLimit, 
-                top: limits.topLimit, 
-                right: limits.rightLimit, 
+                left: limits.leftLimit,
+                top: limits.topLimit,
+                right: limits.rightLimit,
                 bottom: limits.bottomLimit,
             }}
         >
-             <InstrumentWrapper 
+            <InstrumentWrapper
                 height={height}
                 width={width}
             >
-                <Instrument 
+                <Instrument
                     src={image}
                     animation={animation}
                     height={height}
