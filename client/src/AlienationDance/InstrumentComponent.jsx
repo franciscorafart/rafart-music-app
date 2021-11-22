@@ -65,19 +65,15 @@ const InstrumentComponent = ({
     });
 
    function tick() {
-       // TODO: Make animation follow amplitude of original signal and scale it from 0 to 1.
-       const dataArray = new Uint8Array(bufferLength);
-       if(analyser) {
-            analyser.getByteFrequencyData(dataArray); // NOTE: How could I get mean amplitude???
+        // Animation followS amplitude of original signal and scale it from 0 to 1.
+        const dataArray = new Float32Array(bufferLength);
+        if(analyser) {
+            analyser.getFloatTimeDomainData(dataArray);
         }
 
-       const mean = dataArray.length > 0 ? dataArray.reduce((acc, sum) => acc+sum, 0) / dataArray.length : 0;
+        const energy = dataArray.length > 0 ? Math.min((dataArray.reduce((acc, current) => acc + Math.abs(current), 0) / dataArray.length) * 20, 1) : 0;
 
-       if (mean > 0) {
-           animation > 0 ? setAnimation(0) : setAnimation(mean);
-       } else {
-           setAnimation(0);
-       }
+        setAnimation(energy);
    }
 
     const onDrag = (_, d) => {
