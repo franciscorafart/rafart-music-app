@@ -6,7 +6,7 @@ const AWS = require('aws-sdk');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const stripeKey = isProduction? process.env.LIVE_STRIPE_SECRET_KEY: process.env.TEST_STRIPE_SECRET_KEY;
-
+console.log('isProduction', isProduction)
 const stripe = require('stripe')(stripeKey);
 
 const app = express();
@@ -39,7 +39,7 @@ const s3 = new AWS.S3();
 
 const port = process.env.PORT || 8000;
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Runing on port ${port}`);
 });
 
@@ -93,7 +93,6 @@ app.post('/get_audio_files', (_, res) => {
 });
 
 // HELPERS
-
 const getStripeIntent = async (amount, currency, paymentMethodId, customerEmail) => {
   const description = "Rafart - Alienation Dance project support" + customerEmail
 

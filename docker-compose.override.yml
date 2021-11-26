@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  frontend:
+    env_file: "./client/.env"
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+    image: "rafart-app-frontend"
+    ports:
+      - "3000:3000"
+    links: 
+      - "backend:be"
+    volumes:
+      - './client/:/app'
+      - '/app/node_modules'

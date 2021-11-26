@@ -1,0 +1,32 @@
+FROM node:16
+LABEL maintainer="Francisco Rafart <francisco.rafart@gmail.com>"
+
+### Build front end static files ###
+
+WORKDIR /app/client
+
+RUN apt-get update && \
+    apt-get install -qq -y build-essential nodejs yarn
+
+COPY package*.json ./
+RUN yarn install
+
+COPY . .
+
+CMD ["yarn", "build"]
+
+#### Run server
+
+WORKDIR /app
+
+RUN apt-get update && \
+    apt-get install -qq -y build-essential nodejs yarn
+
+COPY package*.json ./
+RUN yarn install
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["yarn", "start"]
