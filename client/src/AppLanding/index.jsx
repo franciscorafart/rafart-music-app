@@ -5,9 +5,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import StripeModal from 'StripeModal';
 import Button from 'react-bootstrap/Button';
 import styled from 'styled-components';
+import Menu from 'components/menu';
 
 // Files
-import logoImage  from 'assets/logo.png';
 import tgr from 'assets/tgr.png';
 import alienation from 'assets/Vox.png'
 
@@ -19,11 +19,6 @@ const Container = styled.div`
     margin-bottom: 20px;
     background-color: black;
     min-height: 900px;
-`;
-
-const LogoContainer = styled.div`
-    width: 200px;
-    margin: 40px 0;
 `;
 
 const ProjectsContainer = styled.div`
@@ -60,7 +55,6 @@ const AppLanding = () => {
 
     return(
         <Container>
-            <LogoContainer><img src={logoImage} width='200px'/></LogoContainer>
             <ProjectsContainer>
                 <ProjectBox>
                     <Link href='/the-great-refusal'>The Great Refusal</Link>
@@ -73,11 +67,11 @@ const AppLanding = () => {
             </ ProjectsContainer>
             <Button
                     onClick={() => setDisplayForm(true)}
-            >Support these projects!</Button>
+                    >Support these projects!</Button>
             <StripeModal 
                 open={displayForm}
                 handleClose={handleStripeModalClose}
-            />
+                />
         </Container>
     )
 };
