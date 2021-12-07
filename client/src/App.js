@@ -6,19 +6,21 @@ import AlienationDance from './AlienationDance';
 import TheGreatRefusal from './TheGreatRefusal';
 
 function App() {
+  const screenSize = window.innerWidth >= 740 ? 'desktop' : window.innerWidth < 600 ? 'mobile' : 'tablet';
+  console.log('screenSize', screenSize)
   return (
     <div className="App">
       <Menu />
       <BrowserRouter>
         <Switch>
           <Route exact path='/'>
-            <AppLanding />
+            <AppLanding screenSize={screenSize} />
           </Route>
           <Route path='/the-great-refusal'>
-            <TheGreatRefusal/>
+            <TheGreatRefusal screenSize={screenSize} />
           </Route>
           <Route path='/alienation-dance'>
-            <AlienationDance />
+            <AlienationDance screenSize={screenSize} />
           </Route>
         </Switch>
       </BrowserRouter>

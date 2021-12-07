@@ -62,9 +62,10 @@ const ButtonsContainer = styled.div`
     gap: ${props => props.mobile ? '10px' : '0'}
 `;
 
+// TODO: Assign 56 to a variable => Menu height.
 const Video = styled.video`
     position: absolute;
-    top: ${props => `${props.logoContainerHeight}px`};
+    top: ${props => `${props.logoContainerHeight + 56}px`};
     left: ${props => `${props.marginPad}px`};
 `;
 
@@ -72,7 +73,7 @@ const Mask = styled.img`
     width: ${props => `${props.width}px`};
     height: ${props => `${props.height}px`};
     position: absolute;
-    top: ${props => `${props.logoContainerHeight}px`};
+    top: ${props => `${props.logoContainerHeight + 56}px`};
     left: ${props => `${props.marginPad}px`};
 `;
 
@@ -88,7 +89,7 @@ const AlienationDance = () => {
     const windowSize = useWindowSize();
     const {width, _} = windowSize;
     const mixerPad = 30;
-    const logoContainerHeight = 100;
+    const logoContainerHeight = 44;
 
     const mixerWidth = width - (mixerPad*2);
     const mixerHeight = (360/640) * mixerWidth;
@@ -211,11 +212,6 @@ const AlienationDance = () => {
             <LogoContainer
                 logoContainerHeight={logoContainerHeight}
             >
-                <img
-                    src={logoImage}
-                    alt='Rafart logo'
-                    width='200px'
-                />
                 <ArrowContainer>
                     <ArrowText>Drag icons ← and → for panning.</ArrowText>
                     <ArrowText>Drag icons ↑ and ↓ for levels </ArrowText>
