@@ -71,7 +71,7 @@ app.post('/get_audio_files', (_, res) => {
   const response = [];
 
   try {
-    for (file of files) {
+    for (const file of files) {
       const instrumentName = file[0];
       const filename = file[1];
       const instrumentKey = file[2];
