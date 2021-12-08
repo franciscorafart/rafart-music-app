@@ -27,7 +27,6 @@ const ProjectsContainer = styled.div`
     margin: 40px 0 20px 0;
 `;
 
-
 const ProjectBox = styled.div`
     display: flex;
     flex-direction: column;

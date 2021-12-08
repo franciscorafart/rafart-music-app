@@ -15,8 +15,9 @@ import styled from 'styled-components';
 import {addAudioBuffer, playBuffer} from './audioUtils';
 
 // Files
-import logoImage  from 'assets/logo.png';
 import mask from 'assets/Mask.png'
+
+const MENU_HEIGHT = 56;
 
 const Container = styled.div`
     display: flex;
@@ -62,10 +63,9 @@ const ButtonsContainer = styled.div`
     gap: ${props => props.mobile ? '10px' : '0'}
 `;
 
-// TODO: Assign 56 to a variable => Menu height.
 const Video = styled.video`
     position: absolute;
-    top: ${props => `${props.logoContainerHeight + 56}px`};
+    top: ${props => `${props.logoContainerHeight + MENU_HEIGHT}px`};
     left: ${props => `${props.marginPad}px`};
 `;
 
@@ -73,7 +73,7 @@ const Mask = styled.img`
     width: ${props => `${props.width}px`};
     height: ${props => `${props.height}px`};
     position: absolute;
-    top: ${props => `${props.logoContainerHeight + 56}px`};
+    top: ${props => `${props.logoContainerHeight + MENU_HEIGHT}px`};
     left: ${props => `${props.marginPad}px`};
 `;
 
@@ -151,24 +151,24 @@ const AlienationDance = () => {
                 .then((data) => {
                     setInstrumentData(data.instruments);
                 });
-            // }
-            } else {
-                (async () => {
-                    const synthFile = await import('assets/synth.mp3');
-                    const stickFile = await import('assets/stick.mp3');
-                    const drumFile = await import('assets/drums.mp3');
-                    const vox = await import('assets/vox.mp3');
-                    const guitars = await import('assets/guitar.mp3');
-
-                    setInstrumentData([
-                        {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
-                        {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
-                        {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
-                        {name: 'Vox', key: 'vox', url: vox.default, 'start': 0},
-                        {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 0},
-                    ]);
-                })();
             }
+            // } else {
+            //     (async () => {
+            //         const synthFile = await import('assets/synth.mp3');
+            //         const stickFile = await import('assets/stick.mp3');
+            //         const drumFile = await import('assets/drums.mp3');
+            //         const vox = await import('assets/vox.mp3');
+            //         const guitars = await import('assets/guitar.mp3');
+
+            //         setInstrumentData([
+            //             {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
+            //             {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
+            //             {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
+            //             {name: 'Vox', key: 'vox', url: vox.default, 'start': 0},
+            //             {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 0},
+            //         ]);
+            //     })();
+            // }
         }
     }, [windowSize, device]);
 
