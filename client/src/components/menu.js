@@ -3,14 +3,13 @@ import { Nav, Navbar} from 'react-bootstrap';
 import logoImage  from 'assets/logo.png';
 
 const menu = [
-    {title: 'Back to Website', linkString: 'https://rafartmusic.com/'},
-    {title: 'All Music Tech Projects', linkString: 'https://app.rafartmusic.com/'},
+    {title: 'All Projects', linkString: 'https://app.rafartmusic.com/'},
 ]
 
 const Menu = () => (
     <>
         <Navbar bg="dark" variant='dark'>
-            <Navbar.Brand href="https://app.rafartmusic.com/"><img
+            <Navbar.Brand href="https://rafartmusic.com/"><img
                 src={logoImage}
                 width="80"
                 height="22"

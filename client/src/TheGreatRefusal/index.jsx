@@ -68,8 +68,6 @@ const TheGreatRefusal = () => {
     const screen = sizes[screenSize];
     return(
         <Container>
-            <LogoContainer><img src={logoImage} width='200px'/></LogoContainer>
-
             <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/DqQxDBfEJCU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></IFrame>
             <Button
                     onClick={() => setDisplayForm(true)}
