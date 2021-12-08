@@ -310,22 +310,16 @@ const AlienationDance = () => {
                 </Modal.Body>}
                 {audioActive && <>
                     <Modal.Body>
-                        {/* <p>Alienation Dance is an interactive song built as a web application.</p> */}
-                        {/* <h5>Make your own mix</h5>
-                        <p>
-                            Drag the icons Left and Right to <strong>pan</strong>, and
-                            Up and Down to <strong>change volume.</strong>
-                        </p> */}
-                        <p>For a better experience <strong>wear headphones</strong> and use a<strong> Desktop computer.</strong></p>
-                        <h6>Support</h6>
+                        <p>For a better experience wear <strong>headphones</strong>, and use <strong>Chrome</strong> on a <strong>Desktop computer</strong>.</p>
+                        <h6><strong>Support</strong></h6>
                         <p>Please support this project by clicking on the <strong>Donate</strong> button on the next screen. All transactions are encrypted and powered by Stripe. </p>
-                        <h6>Acknowledgements</h6>
+                        <h6><strong>Acknowledgements</strong></h6>
                         <p>This project is part of The Great Refusal, a live music experience funded by the Live Arts Boston 2020 grant by the Boston Foundation.</p>
                         <br/>
                         <p>Thanks and enjoy! - Rafart</p>
                     </Modal.Body>
                 <Modal.Footer>
-                    {isEmpty(instruments) && <Spinner animation="border" />}
+                    {isEmpty(instruments) && <>Files loading, please wait <Spinner animation="border" /></>}
                     <Button
                         onClick={() => {
                             setDisplayDialog(false);

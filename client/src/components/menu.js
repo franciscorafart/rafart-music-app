@@ -3,7 +3,7 @@ import { Nav, Navbar} from 'react-bootstrap';
 import logoImage  from 'assets/logo.png';
 
 const menu = [
-    {title: 'All Projects', linkString: 'https://app.rafartmusic.com/'},
+    {title: 'All Projects', linkString: '/'},
 ]
 
 const Menu = () => (
