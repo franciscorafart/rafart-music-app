@@ -6,9 +6,6 @@ import StripeModal from 'StripeModal';
 import Button from 'react-bootstrap/Button';
 import styled from 'styled-components';
 
-// Files
-import logoImage  from 'assets/logo.png';
-
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -19,13 +16,31 @@ const Container = styled.div`
     min-height: 900px;
 `;
 
-const LogoContainer = styled.div`
-    width: 200px;
-    margin: 40px 0;
+const IFrame = styled.iframe`
+    margin-bottom: 60px;
 `;
 
-const IFrame = styled.iframe`
-    margin-bottom: 40px;
+const H1 = styled.h1`
+    color: white;
+`;
+
+const H2 = styled.h2`
+    color: white;
+    font-size: ${props => props.isMobile ? '1em': '1.2em'};
+    margin-bottom: 20px;
+`;
+
+const TextContainer = styled.div`
+    width: ${props => props.isMobile ? '90%': '50%'};
+    margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+const Description = styled.p`
+    color: white;
+    text-align: center;
 `;
 
 const sizes = {
@@ -66,12 +81,30 @@ const TheGreatRefusal = () => {
     }, []);
 
     const screen = sizes[screenSize];
+    const isMobile = screenSize !== 'desktop';
+
     return(
         <Container>
-            <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/DqQxDBfEJCU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></IFrame>
-            <Button
+            <TextContainer isMobile={isMobile}>
+                <H1>The Great Refusal</H1>
+                <Description>
+                    The Great Refusal is an audiovisual performance based on "Eros and Civilization" by H. Marcuse. 
+                    This musical part of the show is a set of six original songs performed with the Chapman Stick, my voice, and live looping with Ableton Live, a drum machine, and a looper pedal. 
+                    For the visual part of the show, the venue comes to life through a custom-built screen to which I project images controlled from the stage, using the projection mapping technique.
+                </Description>
+                <Description>
+                    The Great Refusal was made possible by the Live Arts Boston grant 2020 by the Boston Foundation.
+                </Description>
+                <Button
                     onClick={() => setDisplayForm(true)}
-            >Support this project!</Button>
+                >
+                    Support this project!
+                </Button>
+            </TextContainer>
+            <H2 isMobile={isMobile}>Dorchester Arts Project - November 2020</H2>
+            <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/zkDYKirV4LU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></IFrame>
+            <H2 isMobile={isMobile}>Dorchester Arts Project - June 2021</H2>
+            <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/DqQxDBfEJCU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></IFrame>
             <StripeModal 
                 open={displayForm}
                 handleClose={handleStripeModalClose}
