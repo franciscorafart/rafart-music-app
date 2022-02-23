@@ -58,7 +58,7 @@ const ButtonsContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 30%;
+    width: 40%;
     padding: 20px 0 20px 0;
     gap: ${props => props.mobile ? '10px' : '0'}
 `;
@@ -75,6 +75,11 @@ const Mask = styled.img`
     position: absolute;
     top: ${props => `${props.logoContainerHeight + MENU_HEIGHT}px`};
     left: ${props => `${props.marginPad}px`};
+`;
+
+const Link = styled.a`
+    color: white;
+    text-decoration: none;
 `;
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -284,6 +289,10 @@ const AlienationDance = () => {
                         setPlay(play + 1)
                     }
                 }>{play % 2 === 0 ? 'Play' : 'Pause'}</Button>
+                <Link
+                    href="https://opensea.io/assets/matic/0x2953399124f0cbb46d2cbacd8a89cf0599974963/33295537617419401189972956961766626164882755454860255883972926859746310356993/"
+                    target="_blank"
+                >Buy NFT</Link>
                 <Button
                     onClick={() => setDisplayForm(true)}
                 >Donate</Button>
