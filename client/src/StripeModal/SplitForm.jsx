@@ -131,7 +131,7 @@ const SplitForm = ({
 
                 if (result.paymentIntent) {
                     handleClose();
-                    displayAlert(true, 'success', 'Your support was submitted successfully');
+                    displayAlert(true, 'success', 'Your payment was submitted successfully');
                 }
             });
         })

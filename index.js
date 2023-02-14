@@ -95,7 +95,7 @@ app.post('/get_audio_files', (_, res) => {
 // HELPERS
 
 const getStripeIntent = async (amount, currency, paymentMethodId, customerEmail, customerDescription) => {
-  const description = customerDescription || `Rafart - Alienation Dance project support ${customerEmail}`
+  const description = customerDescription ? `${customerDescription} - ${customerEmail}` : `Rafart - Alienation Dance project support ${customerEmail}`
 
   const paymentIntent = await stripe.paymentIntents.create({
       amount: amount*100,
