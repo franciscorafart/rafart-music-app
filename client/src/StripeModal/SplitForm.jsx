@@ -10,7 +10,7 @@ import {
 import Spinner from 'react-bootstrap/Spinner'
 
 import styled from 'styled-components';
-import { Form, FormGroup, FormLabel, Button, Alert } from 'react-bootstrap';
+import { Form, FormGroup, FormLabel, FormText, Button, Alert } from 'react-bootstrap';
 
 const useOptions = () => {
   const options = useMemo(
@@ -57,6 +57,7 @@ const SplitForm = ({
   const [errorAlert, setErrorAlert] = useState({display: false, variant: '', message: '' });
   const [spinner, setSpinner] = useState(false);
   const [formEmail, setFormEmail] = useState('');
+  const [formDescription, setFormDescription] = useState('');
   const [formValidState, setFormValidState] = useState(initialFormState);
   const [price, setPrice] = useState(0);
 
@@ -68,6 +69,11 @@ const SplitForm = ({
     const handleFormEmail = e => {
         const emailAddress = e.target.value;
         setFormEmail(emailAddress);
+    }
+
+    const handleFormDescription = e => {
+        const description = e.target.value;
+        setFormDescription(description);
     }
 
     const handleSubmit = async event => {
@@ -99,6 +105,7 @@ const SplitForm = ({
             amount: Number(price),
             currency: 'usd',
             customerEmail: formEmail,
+            customerDescription: formDescription,
         };
 
         fetch('/get_intent', {
@@ -209,15 +216,29 @@ const SplitForm = ({
                         CVC
                     </FormLabel>
                         <CardCvcElement
-                        onFocus={clearMessage}
-                        options={options}
-                        onReady={() => {}}
-                        onChange={e => {
-                            const validField = e.complete === true && e.error === undefined;
-                            formValid({ csv: validField });
-                        }}
-                        onBlur={() => {}}
+                            onFocus={clearMessage}
+                            options={options}
+                            onReady={() => {}}
+                            onChange={e => {
+                                const validField = e.complete === true && e.error === undefined;
+                                formValid({ csv: validField });
+                            }}
+                            onBlur={() => {}}
                         />
+                </FormGroup>
+                <FormGroup>
+                    <FormLabel>
+                        Description (optional)
+                    </FormLabel>
+                    <Form.Control
+                        onFocus={clearMessage}
+                        onChange={handleFormDescription}
+                        options={options}
+                        maxLength={25}
+                        placeholder="What you're paying for?"
+                        onReady={() => {}}
+                        onBlur={() => {}}
+                    />
                 </FormGroup>
                 <Button type="submit" variant={validCheckout()? "success": "secondary"} disabled={!stripe || !validCheckout()}>
                     {spinner? <Spinner animation="border"/>: <span>Pay</span>}

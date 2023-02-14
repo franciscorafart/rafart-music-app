@@ -24,7 +24,7 @@ const ProjectsContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 20px;
-    margin: 40px 0 20px 0;
+    margin: 0px 0 20px 0;
 `;
 
 const ProjectBox = styled.div`
@@ -53,6 +53,7 @@ const H1 = styled.h1`
 `;
 
 const IntroTextContainer = styled.div`
+    padding-top: 40px;
     width: ${props => props.isMobile ? '300px': '400px'};
     text-align: center;
 `;
@@ -103,6 +104,10 @@ const AppLanding = ({screenSize}) => {
     };
     return(
         <Container>
+            <Button
+                    onClick={() => setDisplayForm(true)}
+                    >Pay Services
+            </Button>
             <IntroTextContainer isMobile={isMobile}>
                 <H1 isMobile={isMobile}>Music Tech Projects</H1>
                 <IntroText>
@@ -111,10 +116,6 @@ const AppLanding = ({screenSize}) => {
                     You can find the code for this app {<TextLink href='https://github.com/franciscorafart/rafart-music-app'>here</TextLink>}.
                 </IntroText>
             </IntroTextContainer>
-            <Button
-                    onClick={() => setDisplayForm(true)}
-                    >Support these projects!
-            </Button>
             <ProjectsContainer isMobile={isMobile}>
                 <BlockLink href='/the-great-refusal'>
                     <ProjectBox>
@@ -125,7 +126,7 @@ const AppLanding = ({screenSize}) => {
                                 <ProjectImg src={tgr} />
                             </ImageBox>
                             <TextBox isMobile={isMobile}>
-                            The Great refusal is an audiovisual show based on the book Eros and Civilization by H. Marcuse. 
+                                The Great refusal is an audiovisual show based on the book Eros and Civilization by H. Marcuse. 
                                 In this performance, I play a hybrid electronic and instrumental set and project animations into a custom-built stage.
                                 This project was made possible by the LAB 2020 grant by the Boston Foundation.
                             </TextBox>

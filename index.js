@@ -48,9 +48,9 @@ app.listen(port, () => {
 // Stripe payment intent
 app.post('/get_intent', (req, res) => {
   const payload = req.body;
-  const { amount, currency, paymentMethodId, customerEmail } = payload;
+  const { amount, currency, paymentMethodId, customerEmail, customerDescription} = payload;
 
-  getStripeIntent(amount, currency, paymentMethodId, customerEmail).then(data => {
+  getStripeIntent(amount, currency, paymentMethodId, customerEmail, customerDescription).then(data => {
       const state = { clientSecret: data.client_secret}
       const response = JSON.stringify(state);
 
@@ -94,8 +94,8 @@ app.post('/get_audio_files', (_, res) => {
 
 // HELPERS
 
-const getStripeIntent = async (amount, currency, paymentMethodId, customerEmail) => {
-  const description = "Rafart - Alienation Dance project support" + customerEmail
+const getStripeIntent = async (amount, currency, paymentMethodId, customerEmail, customerDescription) => {
+  const description = customerDescription || `Rafart - Alienation Dance project support ${customerEmail}`
 
   const paymentIntent = await stripe.paymentIntents.create({
       amount: amount*100,
