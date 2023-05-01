@@ -76,7 +76,7 @@ app.post('/get_audio_files', (_, res) => {
       const filename = file[1];
       const instrumentKey = file[2];
       const start = file[3];
-      const url = retrieveFileUrlS3(filename);
+      const url = retrieveFileUrlS3(filename, 86400);
 
       response.push({
         key: instrumentKey,
@@ -91,6 +91,15 @@ app.post('/get_audio_files', (_, res) => {
 
   res.json({instruments: response})
 });
+
+app.post('/get_video', (_, res) => {
+  try {
+    const url  = retrieveFileUrlS3('AlienationDanceExperienceShort.mp4', 86400);
+    res.json({video: url});
+  } catch (e) {
+    res.status(400).send(`There was an error on S3: ${e}`);
+  }
+})
 
 // HELPERS
 
@@ -111,11 +120,11 @@ const getStripeIntent = async (amount, currency, paymentMethodId, customerEmail)
   return await paymentIntent;
 }
 
-const retrieveFileUrlS3 = (filename) => {
+const retrieveFileUrlS3 = (filename, expiry) => {
   const getParams = {
       Bucket: process.env.BUCKET,
       Key: filename,
-      Expires: 60, // seconds
+      Expires: expiry || 60, // seconds
   };
 
   return s3.getSignedUrl('getObject', getParams);

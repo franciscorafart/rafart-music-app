@@ -77,11 +77,6 @@ const Mask = styled.img`
     left: ${props => `${props.marginPad}px`};
 `;
 
-const Link = styled.a`
-    color: white;
-    text-decoration: none;
-`;
-
 const isProduction = process.env.NODE_ENV === 'production';
 
 const AlienationDance = () => {
@@ -89,6 +84,7 @@ const AlienationDance = () => {
     const [displayDialog, setDisplayDialog] = useState(true);
     const [audioActive, setAudioActive] = useState(false);
     const [instrumentData, setInstrumentData] = useState(undefined);
+    const [videoUrl, setVideoUrl] = useState('')
 
     const [play, setPlay] = useState(0);
     const windowSize = useWindowSize();
@@ -156,6 +152,20 @@ const AlienationDance = () => {
                 .then((data) => {
                     setInstrumentData(data.instruments);
                 });
+
+                fetch('/get_video', {
+                    method: 'POST',
+                    cache: 'no-cache',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    setVideoUrl(data.video)
+                });
             }
             // } else {
             //     (async () => {
@@ -164,7 +174,7 @@ const AlienationDance = () => {
             //         const drumFile = await import('assets/drums.mp3');
             //         const vox = await import('assets/vox.mp3');
             //         const guitars = await import('assets/guitar.mp3');
-
+            //         const video = await import('assets/AlienationDanceExperienceShort.mp4')
             //         setInstrumentData([
             //             {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
             //             {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
@@ -172,6 +182,8 @@ const AlienationDance = () => {
             //             {name: 'Vox', key: 'vox', url: vox.default, 'start': 0},
             //             {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 0},
             //         ]);
+
+            //         setVideoUrl(video.default)
             //     })();
             // }
         }
@@ -223,7 +235,7 @@ const AlienationDance = () => {
                 </ArrowContainer>
             </LogoContainer>
             {!isNaN(mixerHeight) && !isNaN(mixerWidth) && <MixerContainer height={mixerHeight} width={mixerWidth} mixerPad={mixerPad}>
-                <Video
+                {videoUrl && <Video
                     ref={videoRef}
                     height={mixerHeight-2} // Adjustment to see border
                     width={mixerWidth}
@@ -232,8 +244,8 @@ const AlienationDance = () => {
                     muted
                     playsInline
                     loop
-                    src='https://player.vimeo.com/external/544030006.hd.mp4?s=04cde03295c6b6cd31aede65f0c6d2ad0b3614ad&profile_id=175   '
-                />
+                    src={videoUrl}
+                />}
                 <Mask
                     height={mixerHeight}
                     width={mixerWidth}
@@ -289,10 +301,6 @@ const AlienationDance = () => {
                         setPlay(play + 1)
                     }
                 }>{play % 2 === 0 ? 'Play' : 'Pause'}</Button>
-                <Link
-                    href="https://opensea.io/assets/matic/0x2953399124f0cbb46d2cbacd8a89cf0599974963/33295537617419401189972956961766626164882755454860255883972926859746310356993/"
-                    target="_blank"
-                >Buy NFT</Link>
                 <Button
                     onClick={() => setDisplayForm(true)}
                 >Donate</Button>
@@ -328,7 +336,7 @@ const AlienationDance = () => {
                         <p>Thanks and enjoy! - Rafart</p>
                     </Modal.Body>
                 <Modal.Footer>
-                    {isEmpty(instruments) && <>Files loading, please wait <Spinner animation="border" /></>}
+                    {(isEmpty(instruments) || !videoUrl) && <>Files loading, please wait <Spinner animation="border" /></>}
                     <Button
                         onClick={() => {
                             setDisplayDialog(false);
@@ -336,7 +344,7 @@ const AlienationDance = () => {
                             playAll();
                             setPlay(play + 1)
                         }}
-                        disabled={isEmpty(instruments)}
+                        disabled={isEmpty(instruments) || !videoUrl}
                     >Start the experience</Button>
                 </Modal.Footer></>}
             </Modal>
