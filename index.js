@@ -2,7 +2,16 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const AWS = require('aws-sdk');
+const {S3Client, GetObjectCommand} = require('@aws-sdk/client-s3')
+const {
+  getSignedUrl,
+} = require("@aws-sdk/s3-request-presigner");
+
+const client = new S3Client({ 
+  accessKeyId: process.env.IAM_ACCESS_ID,
+  secretAccessKey: process.env.IAM_SECRET,
+  region: process.env.AWS_REGION,
+});
 
 const isProduction = process.env.NODE_ENV === 'production';
 const stripeKey = isProduction? process.env.LIVE_STRIPE_SECRET_KEY: process.env.TEST_STRIPE_SECRET_KEY;
@@ -29,21 +38,11 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
 });
 
-AWS.config.update({
-  accessKeyId: process.env.IAM_ACCESS_ID,
-  secretAccessKey: process.env.IAM_SECRET,
-  region: process.env.AWS_REGION,
-});
-
-const s3 = new AWS.S3();
-
 const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
     console.log(`Runing on port ${port}`);
 });
-
-// ENDPOINTS
 
 // Stripe payment intent
 app.post('/get_intent', (req, res) => {
@@ -59,7 +58,7 @@ app.post('/get_intent', (req, res) => {
 });
 
 // Send audio files links from s3 to front end
-app.post('/get_audio_files', (_, res) => {
+app.post('/get_audio_files', async (_, res) => {
   const files = [
     ['Synth', 'synth.mp3', 'synth', 0],
     ['Stick', 'stick.mp3', 'stick', 0],
@@ -76,7 +75,7 @@ app.post('/get_audio_files', (_, res) => {
       const filename = file[1];
       const instrumentKey = file[2];
       const start = file[3];
-      const url = retrieveFileUrlS3(filename, 86400);
+      const url = await retrieveFileUrlS3(filename, 86400);
 
       response.push({
         key: instrumentKey,
@@ -92,9 +91,9 @@ app.post('/get_audio_files', (_, res) => {
   res.json({instruments: response})
 });
 
-app.post('/get_video', (_, res) => {
+app.post('/get_video', async (_, res) => {
   try {
-    const url  = retrieveFileUrlS3('AlienationDanceExperienceShort.mp4', 86400);
+    const url  = await retrieveFileUrlS3('AlienationDanceExperienceShort.mp4', 86400);
     res.json({video: url});
   } catch (e) {
     res.status(400).send(`There was an error on S3: ${e}`);
@@ -120,12 +119,16 @@ const getStripeIntent = async (amount, currency, paymentMethodId, customerEmail)
   return await paymentIntent;
 }
 
-const retrieveFileUrlS3 = (filename, expiry) => {
-  const getParams = {
-      Bucket: process.env.BUCKET,
-      Key: filename,
-      Expires: expiry || 60, // seconds
-  };
+const retrieveFileUrlS3 = async (filename, expiry) => {
 
-  return s3.getSignedUrl('getObject', getParams);
+  const getParams = {
+    Bucket: process.env.BUCKET,
+    Key: filename,
+    Expires: expiry || 60, // seconds
+  };
+  
+  const command = new GetObjectCommand(getParams);
+  const res = await getSignedUrl(client, command, { expiresIn: 3600 })
+  
+  return res
 }

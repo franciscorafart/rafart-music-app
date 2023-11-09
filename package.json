@@ -4,7 +4,7 @@
   "description": "Backend for rafart music app",
   "main": "index.js",
   "engine": {
-    "node" : ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0 <17.0.0"
   },
   "scripts": {
     "start": "node index.js",
@@ -23,7 +23,8 @@
   },
   "homepage": "https://github.com/franciscorafart/rafart-music-app#readme",
   "dependencies": {
-    "aws-sdk": "^2.892.0",
+    "@aws-sdk/client-s3": "^3.445.0",
+    "@aws-sdk/s3-request-presigner": "^3.445.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

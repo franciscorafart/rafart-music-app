@@ -78,6 +78,7 @@ const Mask = styled.img`
 `;
 
 const isProduction = process.env.NODE_ENV === 'production';
+const getAudioFilesEndpoint = isProduction ? process.env.GET_AUDIO_FILES_LAMBDA : '/get_audio_files';
 
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
@@ -138,8 +139,8 @@ const AlienationDance = () => {
     // Load files from s3 (or local folder) and add them to buffer on initial render
     useEffect(() => {
         if (windowSize) {
-            if (isProduction) {
-                fetch('/get_audio_files', {
+            // if (isProduction) {
+                fetch(getAudioFilesEndpoint, {
                     method: 'POST',
                     cache: 'no-cache',
                     headers: {
@@ -166,7 +167,7 @@ const AlienationDance = () => {
                 .then((data) => {
                     setVideoUrl(data.video)
                 });
-            }
+            // }
             // } else {
             //     (async () => {
             //         const synthFile = await import('assets/synth.mp3');
