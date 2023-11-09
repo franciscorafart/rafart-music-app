@@ -79,7 +79,8 @@ const Mask = styled.img`
 
 const isProduction = process.env.NODE_ENV === 'production';
 const getAudioFilesEndpoint = isProduction ? process.env.GET_AUDIO_FILES_LAMBDA : '/get_audio_files';
-
+const getVideoFileEndpoint = isProduction ? process.env.REACT_APP_GET_VIDEO_LAMBDA : '/get_videos';
+    
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
     const [displayDialog, setDisplayDialog] = useState(true);
@@ -154,7 +155,7 @@ const AlienationDance = () => {
                     setInstrumentData(data.instruments);
                 });
 
-                fetch('/get_video', {
+                fetch(getVideoFileEndpoint, {
                     method: 'POST',
                     cache: 'no-cache',
                     headers: {
