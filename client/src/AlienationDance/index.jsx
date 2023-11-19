@@ -78,7 +78,7 @@ const Mask = styled.img`
 `;
 
 const isProduction = process.env.NODE_ENV === 'production';
-const getAudioFilesEndpoint = isProduction ? process.env.REACT_APP_GET_AUDIO_FILES_LAMBDA : '/get_audio_files';
+const getAudioFilesEndpoint = isProduction ? process.env.REACT_APP_GET_FILES_LAMBDA : '/get_audio_files';
     
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
