@@ -78,7 +78,7 @@ const Mask = styled.img`
 `;
 
 const isProduction = process.env.NODE_ENV === 'production';
-const getAudioFilesEndpoint = isProduction ? process.env.REACT_APP_GET_FILES_LAMBDA : '/get_audio_files';
+const getFilesEndpoint = isProduction ? process.env.REACT_APP_GET_FILES_LAMBDA : '/get_files';
     
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
@@ -139,7 +139,7 @@ const AlienationDance = () => {
     // Load files from s3 (or local folder) and add them to buffer on initial render
     useEffect(() => {
         if (windowSize) {
-            fetch(getAudioFilesEndpoint, {
+            fetch(getFilesEndpoint, {
                 method: 'POST',
                 cache: 'no-cache',
                 headers: {

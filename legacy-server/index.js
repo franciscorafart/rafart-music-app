@@ -11,7 +11,7 @@ const client = new S3Client({
   accessKeyId: process.env.IAM_ACCESS_ID,
   secretAccessKey: process.env.IAM_SECRET,
   region: process.env.AWS_REGION,
-});
+}); // NOTE: accessKeyId and secretAccessKeu needed on express, with Lambda use only Role
 
 const isProduction = process.env.NODE_ENV === 'production';
 const stripeKey = isProduction? process.env.LIVE_STRIPE_SECRET_KEY: process.env.TEST_STRIPE_SECRET_KEY;
@@ -57,9 +57,8 @@ app.post('/get_intent', (req, res) => {
   }).catch(e => res.json(JSON.stringify({"stripe_error": e})))
 });
 
-// Send audio files links from s3 to front end
-app.post('/get_audio_files', async (_, res) => {
-  console.log('gets in here')
+// Send file links from s3 to front end
+app.post('/get_files', async (_, res) => {
   const files = [
     ['Synth', 'synth.mp3', 'synth', 0],
     ['Stick', 'stick.mp3', 'stick', 0],
@@ -69,7 +68,7 @@ app.post('/get_audio_files', async (_, res) => {
   ];
 
   const response = [];
-
+  let video_url;
   try {
     for (const file of files) {
       const instrumentName = file[0];
@@ -85,21 +84,13 @@ app.post('/get_audio_files', async (_, res) => {
         start: start,
       })
     }
+    video_url = await retrieveFileUrlS3('AlienationDanceExperienceShort.mp4', 86400);
   } catch (e) {
     res.status(400).send(`There was an error on S3: ${e}`);
   }
 
-  res.json({instruments: response})
+  res.json({instruments: response, video: video_url})
 });
-
-app.post('/get_video', async (_, res) => {
-  try {
-    const url  = await retrieveFileUrlS3('AlienationDanceExperienceShort.mp4', 86400);
-    res.json({video: url});
-  } catch (e) {
-    res.status(400).send(`There was an error on S3: ${e}`);
-  }
-})
 
 // HELPERS
 

@@ -1,14 +1,14 @@
-// NOTE: To get audio, not video
+
 import {S3Client, GetObjectCommand} from '@aws-sdk/client-s3';
 import {
   getSignedUrl,
 } from "@aws-sdk/s3-request-presigner";
 
 const client = new S3Client({ 
-  accessKeyId: process.env.IAM_ACCESS_ID,
-  secretAccessKey: process.env.IAM_SECRET,
+  // accessKeyId: process.env.IAM_ACCESS_ID,
+  // secretAccessKey: process.env.IAM_SECRET,
   region: 'us-east-2',
-});
+}); // Attach S3 Read Policy to Tole so Lambda can access S3
 
 
 
