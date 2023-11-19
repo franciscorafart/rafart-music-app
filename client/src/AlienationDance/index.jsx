@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import InstrumentComponent from './InstrumentComponent';
 import useWindowSize from 'utils/hooks/useWindowSize';
 import Audio from './AudioEngine';
-import StripeModal from 'StripeModal';
+// import StripeModal from 'StripeModal';
 import styled from 'styled-components';
 
 import {addAudioBuffer, playBuffer} from './audioUtils';
@@ -78,8 +78,7 @@ const Mask = styled.img`
 `;
 
 const isProduction = process.env.NODE_ENV === 'production';
-const getAudioFilesEndpoint = isProduction ? process.env.GET_AUDIO_FILES_LAMBDA : '/get_audio_files';
-const getVideoFileEndpoint = isProduction ? process.env.REACT_APP_GET_VIDEO_LAMBDA : '/get_videos';
+const getAudioFilesEndpoint = isProduction ? process.env.REACT_APP_GET_AUDIO_FILES_LAMBDA : '/get_audio_files';
     
 const AlienationDance = () => {
     const [displayForm, setDisplayForm] = useState(false);
@@ -90,7 +89,7 @@ const AlienationDance = () => {
 
     const [play, setPlay] = useState(0);
     const windowSize = useWindowSize();
-    const {width, _} = windowSize;
+    const {width} = windowSize;
     const mixerPad = 30;
     const logoContainerHeight = 44;
 
@@ -140,56 +139,22 @@ const AlienationDance = () => {
     // Load files from s3 (or local folder) and add them to buffer on initial render
     useEffect(() => {
         if (windowSize) {
-            // if (isProduction) {
-                fetch(getAudioFilesEndpoint, {
-                    method: 'POST',
-                    cache: 'no-cache',
-                    headers: {
-                    'Content-Type': 'application/json'
-                    },
-                    redirect: 'follow',
-                    referrerPolicy: 'no-referrer',
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    setInstrumentData(data.instruments);
-                });
-
-                fetch(getVideoFileEndpoint, {
-                    method: 'POST',
-                    cache: 'no-cache',
-                    headers: {
-                    'Content-Type': 'application/json'
-                    },
-                    redirect: 'follow',
-                    referrerPolicy: 'no-referrer',
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    setVideoUrl(data.video)
-                });
-            // }
-            // } else {
-            //     (async () => {
-            //         const synthFile = await import('assets/synth.mp3');
-            //         const stickFile = await import('assets/stick.mp3');
-            //         const drumFile = await import('assets/drums.mp3');
-            //         const vox = await import('assets/vox.mp3');
-            //         const guitars = await import('assets/guitar.mp3');
-            //         const video = await import('assets/AlienationDanceExperienceShort.mp4')
-            //         setInstrumentData([
-            //             {name: 'Synth', key: 'synth', url: synthFile.default, 'start': 0},
-            //             {name: 'Stick', key: 'stick', url: stickFile.default, 'start': 0},
-            //             {name: 'Drums', key: 'drums', url: drumFile.default, 'start': 0},
-            //             {name: 'Vox', key: 'vox', url: vox.default, 'start': 0},
-            //             {name: 'Guitars', key: 'guitar', url: guitars.default, 'start': 0},
-            //         ]);
-
-            //         setVideoUrl(video.default)
-            //     })();
-            // }
+            fetch(getAudioFilesEndpoint, {
+                method: 'POST',
+                cache: 'no-cache',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                setInstrumentData(data.instruments);
+                setVideoUrl(data.video)
+            });
         }
-    }, [windowSize, device]);
+    }, [windowSize]);
 
     useEffect(() => {
         if (audioActive && instrumentData) {
@@ -222,9 +187,9 @@ const AlienationDance = () => {
     const pauseAll = () => Audio.context.suspend();
     const resumeAll = () => Audio.context.resume();
 
-    const handleStripeModalClose = () => {
-        setDisplayForm(false);
-    };
+    // const handleStripeModalClose = () => {
+    //     setDisplayForm(false);
+    // };
 
     return(
         <Container>
@@ -350,10 +315,10 @@ const AlienationDance = () => {
                     >Start the experience</Button>
                 </Modal.Footer></>}
             </Modal>
-            <StripeModal
+            {/* <StripeModal
                 open={displayForm}
                 handleClose={handleStripeModalClose}
-            />
+            /> */}
         </Container>
     )
 };
