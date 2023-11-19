@@ -59,6 +59,7 @@ app.post('/get_intent', (req, res) => {
 
 // Send audio files links from s3 to front end
 app.post('/get_audio_files', async (_, res) => {
+  console.log('gets in here')
   const files = [
     ['Synth', 'synth.mp3', 'synth', 0],
     ['Stick', 'stick.mp3', 'stick', 0],

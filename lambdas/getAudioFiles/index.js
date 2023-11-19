@@ -1,3 +1,4 @@
+// NOTE: To get audio, not video
 import {S3Client, GetObjectCommand} from '@aws-sdk/client-s3';
 import {
   getSignedUrl,
@@ -9,6 +10,14 @@ const client = new S3Client({
   region: 'us-east-2',
 });
 
+
+
+const headers = {
+    "Access-Control-Allow-Headers" : "Content-Type",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+}
+
 const retrieveFileUrlS3 = async (filename, expiry) => {
 
   const getParams = {
@@ -18,7 +27,8 @@ const retrieveFileUrlS3 = async (filename, expiry) => {
   };
   
   const command = new GetObjectCommand(getParams);
-  return await getSignedUrl(client, command, { expiresIn: 3600 })
+  const res = await getSignedUrl(client, command, { expiresIn: 3600 })
+  return res;
 }
 
 export const handler = async (event) => {
@@ -31,6 +41,7 @@ export const handler = async (event) => {
   ];
 
   const res = [];
+  let videoUrl = '';
 
   try {
     for (const file of files) {
@@ -47,15 +58,19 @@ export const handler = async (event) => {
         start: start,
       })
     }
+    
+    videoUrl = await retrieveFileUrlS3('AlienationDanceExperienceShort.mp4', 86400);
   } catch (e) {
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify(`There was an error on S3: ${e}`),
     }
   }
-  
+
   return {
     statusCode: 200,
-    body: JSON.stringify({instruments: res}),
+    headers,
+    body: JSON.stringify({instruments: res, video: videoUrl}),
   };
 };

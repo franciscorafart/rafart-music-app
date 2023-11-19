@@ -1,5 +1,5 @@
-/node_modules
-
+legacy-server/node_modules
+legacy-server/.env
 .env
 
 client/.env

@@ -9,7 +9,7 @@ The Alienation Dance is a web interactive song experience. You can play a song a
 This is a simple video streaming app for The Great Refusal, an audiovisual music performance funded by The Live Arts Boston grant by the Boston Foundation. I built this tool to wrap a youtube live performance stream during the pandemic to get remote donations from the audience. I made it using Stripe and Node. https://app.rafartmusic.com/the-great-refusal
 
 ## How to run
-1. On root directory run `$ yarn install` to install API dependencies
+1. On `legacy-server` directory run `$ yarn install` to install API dependencies
 2. On `/client` directory run `$ yarn install` to instal front-end dependencies
 3. On root directory, run `$ yarn dev` to run with nodemon
 4. On `/client` directory run `$ yarn start` to run front end
