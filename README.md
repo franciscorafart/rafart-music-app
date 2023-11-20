@@ -15,3 +15,8 @@ Currently the app runs with a serverless lambda backend, but it's possible to ru
 2. On `/client` directory run `$ yarn install` to instal front-end dependencies
 3. On root directory, run `$ yarn dev` to run with nodemon
 4. On `/client` directory run `$ yarn start` to run front end
+
+## Deployment notes
+
+- _redirects file neede in public dir with `_/*    /index.html   200` for React Router to work on Netlify
+- `NODE_OPTIONS='--openssl-legacy-provider'` needed on build script to avoid error on Netlify build
