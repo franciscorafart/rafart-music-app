@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import InstrumentComponent from './InstrumentComponent';
 import useWindowSize from 'utils/hooks/useWindowSize';
 import Audio from './AudioEngine';
-// import StripeModal from 'StripeModal';
+import StripeModal from 'StripeModal';
 import styled from 'styled-components';
 
 import {addAudioBuffer, playBuffer} from './audioUtils';
@@ -78,6 +78,7 @@ const Mask = styled.img`
 `;
 
 const isProduction = process.env.NODE_ENV === 'production';
+// const isProduction = true
 const getFilesEndpoint = isProduction ? process.env.REACT_APP_GET_FILES_LAMBDA : '/get_files';
     
 const AlienationDance = () => {
@@ -187,9 +188,9 @@ const AlienationDance = () => {
     const pauseAll = () => Audio.context.suspend();
     const resumeAll = () => Audio.context.resume();
 
-    // const handleStripeModalClose = () => {
-    //     setDisplayForm(false);
-    // };
+    const handleStripeModalClose = () => {
+        setDisplayForm(false);
+    };
 
     return(
         <Container>
@@ -315,10 +316,10 @@ const AlienationDance = () => {
                     >Start the experience</Button>
                 </Modal.Footer></>}
             </Modal>
-            {/* <StripeModal
+            <StripeModal
                 open={displayForm}
                 handleClose={handleStripeModalClose}
-            /> */}
+            />
         </Container>
     )
 };

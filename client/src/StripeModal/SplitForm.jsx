@@ -60,6 +60,10 @@ const SplitForm = ({
   const [formValidState, setFormValidState] = useState(initialFormState);
   const [price, setPrice] = useState(0);
 
+    const isProduction = process.env.NODE_ENV === 'production'
+    // const isProduction = true
+
+    const getIntentUrl = isProduction ? process.env.REACT_APP_GET_INTENT_URL : '/get_intent'
 
     const clearMessage = () => {
         setErrorAlert({ display: false, variant: '', message: ''});
@@ -101,7 +105,7 @@ const SplitForm = ({
             customerEmail: formEmail,
         };
 
-        fetch('/get_intent', {
+        fetch(getIntentUrl, {
             method: 'POST',
             cache: 'no-cache',
             headers: {
