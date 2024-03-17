@@ -82,6 +82,7 @@ app.post('/get_files', async (_, res) => {
     video_url = await retrieveFileUrlS3('AlienationDanceExperienceShort.mp4', 86400);
   } catch (e) {
     res.status(400).send(`There was an error on S3: ${e}`);
+    return;
   }
 
   res.json({instruments: response, video: video_url})
