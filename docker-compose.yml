@@ -28,9 +28,10 @@ services:
 
   nodeapp-rafart:
     image: "node:16"
+    build: ./server
     working_dir: "/app"
     volumes:
-      - "./:/app"
+      - "./server:/app"
     ports:
       - "8000:8000"
     depends_on:
@@ -45,12 +46,11 @@ services:
       PG_DATABASE: ${PG_DATABASE}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
-      EMAIL: ${EMAIL}
-      APP_URL: ${APP_URL}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      TEST_STRIPE_SECRET_KEY: ${TEST_STRIPE_SECRET_KEY}
+      IAM_ACCESS_ID: ${IAM_ACCESS_ID}
+      IAM_SECRET: ${IAM_SECRET}
       AWS_REGION: ${AWS_REGION}
-      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      BUCKET: ${BUCKET}
     command: "yarn dev"
     networks:
       - backend

@@ -24,19 +24,11 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-const path = require('path');
-
 // Secure Cors
 const origin = {
   origin: isProduction ? 'https://www.heroku.com/' : '*',
 }
 app.use(cors(origin));
-
-// serves the built version of your react app
-app.use(express.static(path.join(__dirname, 'client/build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/client/build/index.html'))
-});
 
 const port = process.env.PORT || 8000;
 
@@ -44,6 +36,9 @@ app.listen(port, () => {
     console.log(`Runing on port ${port}`);
 });
 
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+});
 // Stripe payment intent
 app.post('/get_intent', (req, res) => {
   const payload = req.body;
