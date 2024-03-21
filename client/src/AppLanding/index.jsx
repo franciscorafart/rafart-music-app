@@ -9,6 +9,7 @@ import styled from 'styled-components';
 // Files
 import tgr from 'assets/tgr.png';
 import alienation from 'assets/Vox.png'
+import MastodonFeed from 'Mastodon';
 
 const Container = styled.div`
     display: flex;
@@ -98,6 +99,8 @@ const AppLanding = ({screenSize}) => {
     const [displayForm, setDisplayForm] = useState(false);
     const isMobile = screenSize !== 'desktop';
 
+    
+
     const handleStripeModalClose = () => {
         setDisplayForm(false);
     };
@@ -147,6 +150,7 @@ const AppLanding = ({screenSize}) => {
                         </SubBox>
                     </ProjectBox>
                 </BlockLink>
+                <MastodonFeed />
             </ ProjectsContainer>
             <StripeModal 
                 open={displayForm}

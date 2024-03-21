@@ -6,6 +6,7 @@
     "node": ">=16.0.0 <17.0.0"
   },
   "dependencies": {
+    "@idotj/mastodon-embed-timeline": "^4.3.10",
     "@stripe/react-stripe-js": "^1.4.0",
     "@stripe/stripe-js": "^1.13.2",
     "@testing-library/jest-dom": "^5.11.4",
@@ -35,16 +36,9 @@
       "react-app/jest"
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": [
+    ">0.2%",
+   "not dead",
+   "not op_mini all"
+ ] 
 }
