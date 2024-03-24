@@ -1,4 +1,3 @@
-import React from 'react'
 import { Nav, Navbar} from 'react-bootstrap';
 import logoImage  from 'assets/logo.png';
 

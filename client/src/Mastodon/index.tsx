@@ -20,9 +20,9 @@ const MastodonFeed = () => {
           );
     }, []);
     return (
-        <div id="mt-container" class="mt-container">
-            <div class="mt-body" role="feed">
-                <div class="mt-loading-spinner"></div>
+        <div id="mt-container" className="mt-container">
+            <div className="mt-body" role="feed">
+                <div className="mt-loading-spinner"></div>
             </div>
         </div>
     );

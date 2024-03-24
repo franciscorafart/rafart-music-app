@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -9,7 +9,12 @@ import styled from 'styled-components';
 // Files
 import tgr from 'assets/tgr.png';
 import alienation from 'assets/Vox.png'
+import { ScreenSizeType } from 'shared/types';
 // import MastodonFeed from 'Mastodon';
+
+type MobileProps = {
+    isMobile: boolean;
+};
 
 const Container = styled.div`
     display: flex;
@@ -21,7 +26,7 @@ const Container = styled.div`
     min-height: 900px;
 `;
 
-const ProjectsContainer = styled.div`
+const ProjectsContainer = styled.div<MobileProps>`
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -37,7 +42,7 @@ const ProjectBox = styled.div`
     border-radius: 10px;
 `;
 
-const SubBox = styled.div`
+const SubBox = styled.div<MobileProps>`
     display: flex;
     flex-direction: ${props => props.isMobile ? 'column' : 'row'};
 `;
@@ -48,13 +53,13 @@ const ImageBox = styled.div`
     height: 300px;
 `;
 
-const H1 = styled.h1`
+const H1 = styled.h1<MobileProps>`
     font-size: ${props => props.isMobile ? '2em': '2.5em'};
     color: white;
     text-align: center;
 `;
 
-const IntroTextContainer = styled.div`
+const IntroTextContainer = styled.div<MobileProps>`
     width: ${props => props.isMobile ? '300px': '400px'};
     text-align: center;
 `;
@@ -65,7 +70,7 @@ const IntroText = styled.p`
     margin: 20px 0 40px 0;
 `;
 
-const TextBox = styled.p`
+const TextBox = styled.p<MobileProps>`
     color: white;
     font-size: 0.8em;
     text-align: justify;
@@ -96,12 +101,11 @@ const ProjectImg = styled.img`
     width: 100%;
 `;
 
-const AppLanding = ({screenSize}) => {
+const AppLanding = ({screenSize}: {screenSize: ScreenSizeType}) => {
     const [displayForm, setDisplayForm] = useState(false);
     const isMobile = screenSize !== 'desktop';
 
     
-
     const handleStripeModalClose = () => {
         setDisplayForm(false);
     };
