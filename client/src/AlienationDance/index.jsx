@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect, useRef, useState, useMemo} from 'react';
+import {useCallback, useEffect, useRef, useState, useMemo} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import {isEmpty} from 'lodash';
-
+// import { ScreenSizeType } from 'shared/types';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import InstrumentComponent from './InstrumentComponent';
@@ -90,11 +90,11 @@ const AlienationDance = () => {
 
     const [play, setPlay] = useState(0);
     const windowSize = useWindowSize();
-    const {width} = windowSize;
+    const { width } = windowSize;
     const mixerPad = 30;
     const logoContainerHeight = 44;
 
-    const mixerWidth = width - (mixerPad*2);
+    const mixerWidth = (width || 0) - (mixerPad*2);
     const mixerHeight = (360/640) * mixerWidth;
 
     const videoRef = useRef(null);
@@ -102,7 +102,7 @@ const AlienationDance = () => {
     // Audio
     const [instruments, setInstruments] = useState({});
 
-    const device = width > 1100 ? 'desktop' : width > 678 ? 'tablet': 'mobile';
+    const device = (width || 0) > 1100 ? 'desktop' : (width || 0) > 678 ? 'tablet': 'mobile';
     const instrumentSize = useMemo(() => device === 'mobile' ? 40 : 100, [device]);
 
     // NOTE: For desktop, we initialize web audio automatically

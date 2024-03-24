@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Menu from 'components/menu';
 import AppLanding from './AppLanding';
@@ -12,17 +12,11 @@ function App() {
     <div className="App">
       <Menu />
       <BrowserRouter>
-        <Switch>
-          <Route exact path='/'>
-            <AppLanding screenSize={screenSize} />
-          </Route>
-          <Route path='/the-great-refusal'>
-            <TheGreatRefusal screenSize={screenSize} />
-          </Route>
-          <Route path='/alienation-dance'>
-            <AlienationDance screenSize={screenSize} />
-          </Route>
-        </Switch>
+        <Routes>
+          <Route path='/' element={ <AppLanding screenSize={screenSize} />} />
+          <Route path='/the-great-refusal' element={<TheGreatRefusal screenSize={screenSize} />} />
+          <Route path='/alienation-dance' element={<AlienationDance />}/>
+        </Routes>
       </BrowserRouter>
       
     </div>

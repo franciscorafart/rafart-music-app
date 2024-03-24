@@ -9,7 +9,7 @@ import styled from 'styled-components';
 // Files
 import tgr from 'assets/tgr.png';
 import alienation from 'assets/Vox.png'
-import MastodonFeed from 'Mastodon';
+// import MastodonFeed from 'Mastodon';
 
 const Container = styled.div`
     display: flex;
@@ -34,6 +34,7 @@ const ProjectBox = styled.div`
     align-items: center;
     border: 1px solid white;
     padding: 5px;
+    border-radius: 10px;
 `;
 
 const SubBox = styled.div`
@@ -150,7 +151,7 @@ const AppLanding = ({screenSize}) => {
                         </SubBox>
                     </ProjectBox>
                 </BlockLink>
-                <MastodonFeed />
+                {/* <MastodonFeed /> */}
             </ ProjectsContainer>
             <StripeModal 
                 open={displayForm}

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-
+import {useEffect, useState} from 'react';
+import { ScreenSizeType } from 'shared/types';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import StripeModal from 'StripeModal';
@@ -16,6 +16,10 @@ const Container = styled.div`
     min-height: 900px;
 `;
 
+interface Props {
+    isMobile: boolean;
+}
+
 const IFrame = styled.iframe`
     margin-bottom: 60px;
 `;
@@ -24,13 +28,13 @@ const H1 = styled.h1`
     color: white;
 `;
 
-const H2 = styled.h2`
+const H2 = styled.h2<Props>`
     color: white;
     font-size: ${props => props.isMobile ? '1em': '1.2em'};
     margin-bottom: 20px;
 `;
 
-const TextContainer = styled.div`
+const TextContainer = styled.div<Props>`
     width: ${props => props.isMobile ? '90%': '50%'};
     margin-bottom: 60px;
     display: flex;
@@ -58,7 +62,7 @@ const sizes = {
     },
 }
 
-const TheGreatRefusal = () => {
+const TheGreatRefusal = ({ screenSize } : {screenSize: ScreenSizeType}) => {
     const [displayForm, setDisplayForm] = useState(false);
 
     const handleStripeModalClose = () => {
@@ -66,7 +70,7 @@ const TheGreatRefusal = () => {
     };
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-    const screenSize = windowWidth >= 800 ? 'desktop' : windowWidth < 600 ? 'mobile' : 'tablet';
+
 
     useEffect(() => {
         const handleWindowResize = () => {
@@ -102,9 +106,9 @@ const TheGreatRefusal = () => {
                 </Button>
             </TextContainer>
             <H2 isMobile={isMobile}>Dorchester Arts Project - November 2020</H2>
-            <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/zkDYKirV4LU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></IFrame>
+            <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/zkDYKirV4LU" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen/>
             <H2 isMobile={isMobile}>Dorchester Arts Project - June 2021</H2>
-            <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/DqQxDBfEJCU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></IFrame>
+            <IFrame width={screen.w} height={screen.h} src="https://www.youtube.com/embed/DqQxDBfEJCU" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
             <StripeModal 
                 open={displayForm}
                 handleClose={handleStripeModalClose}
