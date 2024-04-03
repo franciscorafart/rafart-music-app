@@ -5,6 +5,8 @@ import { DataSource } from "typeorm";
 import { Document } from "./entity/Document";
 import { User } from "./entity/User";
 
+import { AddUserAndDocumentModel1712155250382 } from "./migration/1712155250382-AddUserAndDocumentModel";
+
 const sslRequired =
   process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
@@ -15,7 +17,7 @@ export const AppDataSource = new DataSource({
   username: process.env.PG_USER_NAME,
   password: process.env.PG_PASSWORD,
   database: process.env.PG_DATABASE,
-  ssl: sslRequired
+  ssl: sslRequired // TODO: Remove for Flyio?
     ? {
         ca: readFileSync(
           join(__dirname, "assets", "us-east-1-bundle.pem")
@@ -25,6 +27,6 @@ export const AppDataSource = new DataSource({
   synchronize: false, // NOTE: Automatic migration (make it false in production)
   logging: false,
   entities: [Document, User],
-  migrations: [],
+  migrations: [AddUserAndDocumentModel1712155250382],
   subscribers: [],
 });
