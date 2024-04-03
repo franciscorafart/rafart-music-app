@@ -3,6 +3,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import { retrieveFileUrlS3 } from "./helpers/s3";
+import authentication from "./routes/auth";
 
 const isProduction = process.env.NODE_ENV === "production";
 const stripeKey = isProduction
@@ -87,6 +88,9 @@ app.post("/get_files", async (_, res) => {
 
   res.json({ instruments: response, video: video_url });
 });
+
+// routes
+app.use("/auth", authentication);
 
 // HELPERS
 

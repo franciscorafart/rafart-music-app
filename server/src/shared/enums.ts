@@ -5,3 +5,10 @@ export enum Roles {
   Superadmin = 50,
   clientGuest,
 }
+
+export enum ResponseStatus {
+  Ok = "ok",
+  BadRequest = "bad_request",
+  Unauthorized = "unauthorized",
+  Error = "server_error",
+}
