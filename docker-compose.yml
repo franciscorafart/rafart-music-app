@@ -47,25 +47,11 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
       TEST_STRIPE_SECRET_KEY: ${TEST_STRIPE_SECRET_KEY}
-      IAM_ACCESS_ID: ${IAM_ACCESS_ID}
-      IAM_SECRET: ${IAM_SECRET}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
-      BUCKET: ${BUCKET}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
     command: "yarn dev"
-    networks:
-      - backend
-
-  client:
-    build: ./client
-    volumes:
-      - ./client:/app
-      - /app/node_modules
-    ports:
-      - 3000:3000
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    depends_on:
-      - nodeapp-rafart
     networks:
       - backend
 
