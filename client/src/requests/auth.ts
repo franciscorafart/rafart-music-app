@@ -111,7 +111,7 @@ export const logout = async () => {
     route: "auth/logout",
   });
 
-  localStorage.removeItem("lawgicoToken");
+  localStorage.removeItem("rafartToken");
 
   return res;
 };

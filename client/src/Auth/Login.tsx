@@ -163,7 +163,7 @@ export default function Example() {
             {/* <img
               className="mx-auto h-10 w-auto"
               src=""
-              alt="Lawgico Logo"
+              alt="Rafart Logo"
             /> */}
             <h2>Entra en tu cuenta</h2>
           </div>
