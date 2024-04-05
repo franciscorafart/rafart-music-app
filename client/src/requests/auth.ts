@@ -34,6 +34,12 @@ type ResetPasswordPayload = {
   password: string;
 };
 
+type SignUpPayload = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 export const getAuthUser = async () => {
   const user = await get<GetResponse>({
     route: "auth/user",
@@ -68,6 +74,11 @@ export const confirmUser = async (
 
 export const login = async (payload: LoginPayload) => {
   const res = await post<LoginResponse>({ route: "auth/login", payload });
+  return res;
+};
+
+export const signup = async (payload: SignUpPayload) => {
+  const res = await post<PostResponse>({ route: "auth/sign-up", payload });
   return res;
 };
 

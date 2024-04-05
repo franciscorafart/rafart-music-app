@@ -1,4 +1,4 @@
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || "";
 
 export async function post<ResultType>({
   route,
@@ -8,7 +8,7 @@ export async function post<ResultType>({
   payload: any;
 }): Promise<ResultType | null> {
   const jwtToken = localStorage.getItem("rafartToken") || "";
-
+  // console.log("route", `${apiUrl}/${route}`);
   try {
     const res = await fetch(`${apiUrl}/${route}`, {
       method: "POST",

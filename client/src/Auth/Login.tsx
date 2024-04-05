@@ -1,25 +1,36 @@
 import { useEffect, useMemo, useState } from "react";
 import account from "atoms/account";
 import alert from "atoms/alert";
-import { goHome, validateEmail } from "utils/login";
-import { classNames } from "utils/utils";
+import {
+  goHome,
+  passwordValid,
+  signUpPasswordValid,
+  validateEmail,
+} from "utils/login";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { login, requestPasswordReset, resendConfirm } from "requests/auth";
+import {
+  login,
+  requestPasswordReset,
+  resendConfirm,
+  signup,
+} from "requests/auth";
 // import Alert from "components/shared/Alert";
 
 export default function Example() {
   const [formMode, setFormMode] = useState<
-    "login" | "password" | "resend-confirm"
+    "login" | "password" | "resend-confirm" | "signup"
   >("login");
   const setUserAccount = useSetRecoilState(account);
   const [alerta, setAlert] = useRecoilState(alert);
 
   const [formEmail, setFormEmail] = useState("");
   const [formPassword, setFormPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
 
   const resetForm = () => {
     setFormEmail("");
     setFormPassword("");
+    setRepeatPassword("");
   };
 
   useEffect(() => {
@@ -40,12 +51,18 @@ export default function Example() {
     setFormPassword(password);
   };
 
+  const handleFormRepeatPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const password = e.currentTarget.value;
+    setRepeatPassword(password);
+  };
+
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     const payload = {
       email: formEmail,
       password: formPassword || "",
+      confirmPassword: repeatPassword || "",
     };
     let data;
     if (formMode === "password") {
@@ -80,10 +97,26 @@ export default function Example() {
           message: data?.msg || "No se pudo enviar el email de confirmación",
         });
       }
+    } else if (formMode === "signup") {
+      data = await signup(payload);
+      if (data?.success) {
+        setAlert({
+          display: true,
+          variant: "success",
+          message: `User created successfully. Please check your email for a confirmation link.`,
+        });
+        setFormMode("login");
+      } else {
+        setAlert({
+          display: true,
+          variant: "error",
+          message: data?.msg || "Error creating user. Please try again.",
+        });
+      }
     } else {
       data = await login(payload);
       if (data?.success) {
-        localStorage.setItem("lawgicoToken", data.token);
+        localStorage.setItem("rafartToken", data.token);
         setAlert({
           display: true,
           variant: "success",
@@ -107,13 +140,19 @@ export default function Example() {
     }
   };
 
-  const formValid = useMemo(
-    () =>
-      formMode === "login"
-        ? validateEmail(formEmail) && formPassword
-        : validateEmail(formEmail),
-    [formEmail, formPassword, formMode]
-  );
+  const formValid = useMemo(() => {
+    if (formMode === "signup") {
+      return (
+        validateEmail(formEmail) &&
+        signUpPasswordValid(formPassword) &&
+        formPassword === repeatPassword
+      );
+    } else if (formMode === "login") {
+      return validateEmail(formEmail) && passwordValid(formPassword);
+    } else {
+      return validateEmail(formEmail);
+    }
+  }, [formMode, formEmail, formPassword, repeatPassword]);
 
   return (
     <>
@@ -123,7 +162,7 @@ export default function Example() {
           <div>
             {/* <img
               className="mx-auto h-10 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              src=""
               alt="Lawgico Logo"
             /> */}
             <h2>Entra en tu cuenta</h2>
@@ -152,7 +191,7 @@ export default function Example() {
                   placeholder="example@email.com"
                 />
               </div>
-              {formMode === "login" && (
+              {(formMode === "login" || formMode === "signup") && (
                 <>
                   <div>
                     <label htmlFor="password" className="sr-only">
@@ -177,15 +216,35 @@ export default function Example() {
                   </label>
                 </>
               )}
+              {formMode === "signup" && (
+                <div>
+                  <label htmlFor="confirm-password" className="sr-only">
+                    Confirm Password
+                  </label>
+                  <input
+                    id="confirm-password"
+                    name="confirm-password"
+                    type="confirm-password"
+                    onFocus={clearMessage}
+                    value={repeatPassword}
+                    onChange={handleFormRepeatPassword}
+                    autoComplete="confirm-password"
+                    required
+                    placeholder="Confirm Password"
+                  />
+                </div>
+              )}
             </div>
 
             <div>
               <button type="submit" disabled={!formValid}>
                 {formMode === "login"
-                  ? "Entrar"
+                  ? "Log In"
                   : formMode === "password"
-                  ? "Reestablecer contraseña"
-                  : "Reenviar email de confimación"}
+                  ? "Reset Password"
+                  : formMode === "signup"
+                  ? "Sign up"
+                  : "Resend confimation email"}
               </button>
             </div>
             <div>
@@ -195,11 +254,11 @@ export default function Example() {
                     <div onClick={() => setFormMode("password")}>
                       Forgot your password?
                     </div>
-                    <div>
-                      <div onClick={() => setFormMode("resend-confirm")}>
-                        Resend confirmation email
-                      </div>
+
+                    <div onClick={() => setFormMode("resend-confirm")}>
+                      Resend confirmation email
                     </div>
+                    <div onClick={() => setFormMode("signup")}>Sign up</div>
                   </div>
                 </>
               ) : (
