@@ -81,7 +81,7 @@ const isProduction = process.env.NODE_ENV === "production";
 // const isProduction = true
 const getFilesEndpoint = isProduction
   ? process.env.REACT_APP_GET_FILES_LAMBDA
-  : "/get_files";
+  : "/alientation-dance/get_files";
 
 const AlienationDance = () => {
   const [displayForm, setDisplayForm] = useState(false);
