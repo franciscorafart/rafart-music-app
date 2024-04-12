@@ -6,6 +6,8 @@ import AppLanding from "./AppLanding";
 import AlienationDance from "./AlienationDance";
 import TheGreatRefusal from "./TheGreatRefusal";
 import Login from "Auth/Login";
+import ResetPassword from "Auth/ResetPassword";
+import ConfirmEmail from "Auth/ConfirmEmail";
 
 function App() {
   const screenSize =
@@ -14,7 +16,7 @@ function App() {
       : window.innerWidth < 600
       ? "mobile"
       : "tablet";
-  console.log("screenSize", screenSize);
+
   return (
     <div className="App">
       <RecoilRoot>
@@ -28,6 +30,8 @@ function App() {
             />
             <Route path="/alienation-dance" element={<AlienationDance />} />
             <Route path="/login" element={<Login />} />
+            <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="confirm-email" element={<ConfirmEmail />} />
           </Routes>
         </BrowserRouter>
       </RecoilRoot>

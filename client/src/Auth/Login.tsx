@@ -1,12 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import account from "atoms/account";
 import alert from "atoms/alert";
-import {
-  goHome,
-  passwordValid,
-  signUpPasswordValid,
-  validateEmail,
-} from "utils/login";
+import { goHome, passwordValid, validateEmail } from "utils/login";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   login,
@@ -14,7 +9,24 @@ import {
   resendConfirm,
   signup,
 } from "requests/auth";
+import {
+  Container,
+  FormElement,
+  FormElements,
+  H2,
+  Link,
+  LinkContainer,
+  TitleContainer,
+} from "./shared";
+import { Button } from "react-bootstrap";
+import { Form, FormLabel } from "react-bootstrap";
+import styled from "styled-components";
 // import Alert from "components/shared/Alert";
+
+const Label = styled(FormLabel)`
+  color: white;
+  margin: 0;
+`;
 
 export default function Example() {
   const [formMode, setFormMode] = useState<
@@ -88,13 +100,13 @@ export default function Example() {
         setAlert({
           display: true,
           variant: "success",
-          message: `Email de confirmación de usuario enviado a ${data.email}.`,
+          message: `Confirmation email sent to ${data.email}.`,
         });
       } else {
         setAlert({
           display: true,
           variant: "error",
-          message: data?.msg || "No se pudo enviar el email de confirmación",
+          message: data?.msg || "Confirmation email not sent.",
         });
       }
     } else if (formMode === "signup") {
@@ -120,7 +132,7 @@ export default function Example() {
         setAlert({
           display: true,
           variant: "success",
-          message: `Log in exitoso`,
+          message: `Sucessful log in`,
         });
 
         setUserAccount({
@@ -134,142 +146,109 @@ export default function Example() {
         setAlert({
           display: true,
           variant: "error",
-          message: data?.msg || "Error de log in",
+          message: data?.msg || "Log in error",
         });
       }
     }
   };
 
   const formValid = useMemo(() => {
-    if (formMode === "signup") {
-      return (
-        validateEmail(formEmail) &&
-        signUpPasswordValid(formPassword) &&
-        formPassword === repeatPassword
-      );
-    } else if (formMode === "login") {
+    if (formMode === "login") {
       return validateEmail(formEmail) && passwordValid(formPassword);
     } else {
       return validateEmail(formEmail);
     }
-  }, [formMode, formEmail, formPassword, repeatPassword]);
+  }, [formMode, formEmail, formPassword]);
 
   return (
-    <>
+    <Container>
       {/* {alerta.display && <Alert />} */}
       <div>
-        <div>
-          <div>
-            {/* <img
+        <TitleContainer>
+          {/* <img
               className="mx-auto h-10 w-auto"
               src=""
               alt="Rafart Logo"
             /> */}
-            <h2>Entra en tu cuenta</h2>
-          </div>
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-6"
-            action="#"
-            method="POST"
-          >
-            <div>
-              <div />
-              <div>
-                <label htmlFor="email-address" className="sr-only">
-                  Dirección Email
-                </label>
-                <input
-                  id="email-address"
-                  name="email"
-                  type="email"
+          <H2>Account Log in / Sign Up</H2>
+        </TitleContainer>
+        <Form
+          onSubmit={handleSubmit}
+          className="space-y-6"
+          action="#"
+          method="POST"
+        >
+          <FormElements>
+            <FormElement>
+              <Label htmlFor="email-address" className="sr-only">
+                Email
+              </Label>
+              <Form.Control
+                id="email-address"
+                name="email"
+                type="email"
+                onFocus={clearMessage}
+                value={formEmail}
+                onChange={handleFormEmail}
+                // disabled={validateEmail(formEmail)}
+                required
+                placeholder="example@email.com"
+              />
+            </FormElement>
+            {formMode === "login" && (
+              <FormElement>
+                <Label htmlFor="password" className="sr-only">
+                  Password
+                </Label>
+                <Form.Control
+                  id="password"
+                  name="password"
+                  type="password"
                   onFocus={clearMessage}
-                  value={formEmail}
-                  onChange={handleFormEmail}
-                  // disabled={validateEmail(formEmail)}
+                  value={formPassword}
+                  onChange={handleFormPassword}
+                  autoComplete="current-password"
                   required
-                  placeholder="example@email.com"
+                  placeholder="Password"
                 />
-              </div>
-              {(formMode === "login" || formMode === "signup") && (
-                <>
-                  <div>
-                    <label htmlFor="password" className="sr-only">
-                      Password
-                    </label>
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      onFocus={clearMessage}
-                      value={formPassword}
-                      onChange={handleFormPassword}
-                      autoComplete="current-password"
-                      required
-                      placeholder="Contraseña"
-                    />
-                  </div>
+              </FormElement>
+            )}
+            {formMode === "signup" && (
+              <Label htmlFor="" className="sr-only">
+                Enter your email to create an account
+              </Label>
+            )}
+          </FormElements>
 
-                  <label htmlFor="" className="sr-only">
-                    Your password must contain at least 8 characters, including
-                    at least one letter and one number.
-                  </label>
-                </>
-              )}
-              {formMode === "signup" && (
-                <div>
-                  <label htmlFor="confirm-password" className="sr-only">
-                    Confirm Password
-                  </label>
-                  <input
-                    id="confirm-password"
-                    name="confirm-password"
-                    type="confirm-password"
-                    onFocus={clearMessage}
-                    value={repeatPassword}
-                    onChange={handleFormRepeatPassword}
-                    autoComplete="confirm-password"
-                    required
-                    placeholder="Confirm Password"
-                  />
-                </div>
-              )}
-            </div>
+          <Button variant="primary" type="submit" disabled={!formValid}>
+            {formMode === "login"
+              ? "Log In"
+              : formMode === "password"
+              ? "Reset Password"
+              : formMode === "signup"
+              ? "Sign up"
+              : "Resend confimation email"}
+          </Button>
+        </Form>
+        <>
+          {formMode === "login" ? (
+            <LinkContainer>
+              <Link onClick={() => setFormMode("password")}>
+                Forgot your password?
+              </Link>
 
-            <div>
-              <button type="submit" disabled={!formValid}>
-                {formMode === "login"
-                  ? "Log In"
-                  : formMode === "password"
-                  ? "Reset Password"
-                  : formMode === "signup"
-                  ? "Sign up"
-                  : "Resend confimation email"}
-              </button>
-            </div>
-            <div>
-              {formMode === "login" ? (
-                <>
-                  <div>
-                    <div onClick={() => setFormMode("password")}>
-                      Forgot your password?
-                    </div>
-
-                    <div onClick={() => setFormMode("resend-confirm")}>
-                      Resend confirmation email
-                    </div>
-                    <div onClick={() => setFormMode("signup")}>Sign up</div>
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <div onClick={() => setFormMode("login")}>Sign In</div>
-                </div>
-              )}
-            </div>
-          </form>
-        </div>
+              <Link onClick={() => setFormMode("resend-confirm")}>
+                Resend confirmation email
+              </Link>
+              <Link onClick={() => setFormMode("signup")}>Sign up</Link>
+            </LinkContainer>
+          ) : (
+            <LinkContainer>
+              <Link onClick={() => setFormMode("login")}>Sign In</Link>
+            </LinkContainer>
+          )}
+        </>
       </div>
-    </>
+    </Container>
   );
 }

@@ -1,7 +1,10 @@
 import { Nav, Navbar } from "react-bootstrap";
 import logoImage from "assets/logo.png";
 
-const menu = [{ title: "All Projects", linkString: "/" }];
+const menu = [
+  { title: "Login", linkString: "/login" },
+  { title: "All Projects", linkString: "/" },
+];
 
 const Menu = () => (
   <>
@@ -17,7 +20,11 @@ const Menu = () => (
       </Navbar.Brand>
       <Navbar.Collapse className="justify-content-end">
         {menu.map((item) => (
-          <Nav.Link style={{ color: "white" }} href={item.linkString}>
+          <Nav.Link
+            key={`menu-${item.title}`}
+            style={{ color: "white", padding: "0 10px" }}
+            href={item.linkString}
+          >
             {item.title}
           </Nav.Link>
         ))}
