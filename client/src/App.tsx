@@ -5,8 +5,9 @@ import Menu from "components/menu";
 import AppLanding from "./AppLanding";
 import AlienationDance from "./AlienationDance";
 import TheGreatRefusal from "./TheGreatRefusal";
-import Login from "Auth/Login";
 import ResetPassword from "Auth/ResetPassword";
+import FansPortal from "Fans";
+import MainLayout from "MainLayout";
 
 function App() {
   const screenSize =
@@ -19,17 +20,38 @@ function App() {
   return (
     <div className="App">
       <RecoilRoot>
-        <Menu />
         <BrowserRouter>
+          <Menu />
           <Routes>
-            <Route path="/" element={<AppLanding screenSize={screenSize} />} />
+            <Route
+              path="/"
+              element={
+                <MainLayout>
+                  <AppLanding screenSize={screenSize} />
+                </MainLayout>
+              }
+            />
             <Route
               path="/the-great-refusal"
               element={<TheGreatRefusal screenSize={screenSize} />}
             />
-            <Route path="/alienation-dance" element={<AlienationDance />} />
-            <Route path="/login" element={<Login />} />
+            <Route
+              path="/alienation-dance"
+              element={
+                <MainLayout>
+                  <AlienationDance />
+                </MainLayout>
+              }
+            />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route
+              path="/fans"
+              element={
+                <MainLayout>
+                  <FansPortal screenSize={screenSize} />
+                </MainLayout>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </RecoilRoot>

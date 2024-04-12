@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import account from "atoms/account";
 import alert from "atoms/alert";
-import { goHome, passwordValid, validateEmail } from "utils/login";
+import { goFans, passwordValid, validateEmail } from "utils/login";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { login, requestPasswordReset, signup } from "requests/auth";
 import {
@@ -16,6 +16,7 @@ import {
 import { Button } from "react-bootstrap";
 import { Form, FormLabel } from "react-bootstrap";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 // import Alert from "components/shared/Alert";
 
 const Label = styled(FormLabel)`
@@ -23,13 +24,13 @@ const Label = styled(FormLabel)`
   margin: 0;
 `;
 
-export default function Example() {
+export default function Login() {
   const [formMode, setFormMode] = useState<"login" | "password" | "signup">(
     "login"
   );
   const setUserAccount = useSetRecoilState(account);
   const [alerta, setAlert] = useRecoilState(alert);
-
+  const navigate = useNavigate();
   const [formEmail, setFormEmail] = useState("");
   const [formPassword, setFormPassword] = useState("");
 
@@ -112,9 +113,9 @@ export default function Example() {
           userId: data.id,
           email: data.email,
           role: data.role,
-          companyId: "", // We get it later from getUser
         });
-        goHome();
+
+        navigate("/fans");
       } else {
         setAlert({
           display: true,

@@ -28,6 +28,9 @@ export const goHome = () => {
   window.location.href = "/";
 };
 
+export const goFans = () => {
+  window.location.href = "/fans";
+};
 export const goLogin = () => {
   window.location.href = "/login";
 };
