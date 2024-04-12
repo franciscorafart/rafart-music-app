@@ -36,8 +36,6 @@ type ResetPasswordPayload = {
 
 type SignUpPayload = {
   email: string;
-  password: string;
-  confirmPassword: string;
 };
 
 export const getAuthUser = async () => {

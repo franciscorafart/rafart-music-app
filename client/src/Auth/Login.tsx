@@ -3,12 +3,7 @@ import account from "atoms/account";
 import alert from "atoms/alert";
 import { goHome, passwordValid, validateEmail } from "utils/login";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  login,
-  requestPasswordReset,
-  resendConfirm,
-  signup,
-} from "requests/auth";
+import { login, requestPasswordReset, signup } from "requests/auth";
 import {
   Container,
   FormElement,
@@ -29,20 +24,18 @@ const Label = styled(FormLabel)`
 `;
 
 export default function Example() {
-  const [formMode, setFormMode] = useState<
-    "login" | "password" | "resend-confirm" | "signup"
-  >("login");
+  const [formMode, setFormMode] = useState<"login" | "password" | "signup">(
+    "login"
+  );
   const setUserAccount = useSetRecoilState(account);
   const [alerta, setAlert] = useRecoilState(alert);
 
   const [formEmail, setFormEmail] = useState("");
   const [formPassword, setFormPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
 
   const resetForm = () => {
     setFormEmail("");
     setFormPassword("");
-    setRepeatPassword("");
   };
 
   useEffect(() => {
@@ -63,19 +56,14 @@ export default function Example() {
     setFormPassword(password);
   };
 
-  const handleFormRepeatPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const password = e.currentTarget.value;
-    setRepeatPassword(password);
-  };
-
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     const payload = {
       email: formEmail,
       password: formPassword || "",
-      confirmPassword: repeatPassword || "",
     };
+
     let data;
     if (formMode === "password") {
       data = await requestPasswordReset(payload);
@@ -94,28 +82,13 @@ export default function Example() {
             "No se pudo enviar el email de recuperación de contraseña",
         });
       }
-    } else if (formMode === "resend-confirm") {
-      data = await resendConfirm(payload);
-      if (data?.success) {
-        setAlert({
-          display: true,
-          variant: "success",
-          message: `Confirmation email sent to ${data.email}.`,
-        });
-      } else {
-        setAlert({
-          display: true,
-          variant: "error",
-          message: data?.msg || "Confirmation email not sent.",
-        });
-      }
     } else if (formMode === "signup") {
       data = await signup(payload);
       if (data?.success) {
         setAlert({
           display: true,
           variant: "success",
-          message: `User created successfully. Please check your email for a confirmation link.`,
+          message: `User created successfully. Please check your email to set up your password.`,
         });
         setFormMode("login");
       } else {
@@ -170,7 +143,7 @@ export default function Example() {
               src=""
               alt="Rafart Logo"
             /> */}
-          <H2>Account Log in / Sign Up</H2>
+          <H2>Authentication</H2>
         </TitleContainer>
         <Form
           onSubmit={handleSubmit}
@@ -190,7 +163,6 @@ export default function Example() {
                 onFocus={clearMessage}
                 value={formEmail}
                 onChange={handleFormEmail}
-                // disabled={validateEmail(formEmail)}
                 required
                 placeholder="example@email.com"
               />
@@ -224,30 +196,24 @@ export default function Example() {
             {formMode === "login"
               ? "Log In"
               : formMode === "password"
-              ? "Reset Password"
-              : formMode === "signup"
-              ? "Sign up"
-              : "Resend confimation email"}
+              ? "Reset Password Request"
+              : "Sign up"}
           </Button>
         </Form>
-        <>
-          {formMode === "login" ? (
-            <LinkContainer>
-              <Link onClick={() => setFormMode("password")}>
-                Forgot your password?
-              </Link>
 
-              <Link onClick={() => setFormMode("resend-confirm")}>
-                Resend confirmation email
-              </Link>
-              <Link onClick={() => setFormMode("signup")}>Sign up</Link>
-            </LinkContainer>
-          ) : (
-            <LinkContainer>
-              <Link onClick={() => setFormMode("login")}>Sign In</Link>
-            </LinkContainer>
+        <LinkContainer>
+          {formMode !== "login" && (
+            <Link onClick={() => setFormMode("login")}>Sign In</Link>
           )}
-        </>
+          {formMode !== "signup" && (
+            <Link onClick={() => setFormMode("signup")}>Sign up</Link>
+          )}
+          {formMode !== "password" && (
+            <Link onClick={() => setFormMode("password")}>
+              Reset password / Recover account
+            </Link>
+          )}
+        </LinkContainer>
       </div>
     </Container>
   );

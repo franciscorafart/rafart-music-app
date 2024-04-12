@@ -1,28 +1,51 @@
-import { useMemo, useState, useEffect, useCallback } from "react";
-import { goHome, isRepeatValid, signUpPasswordValid } from "utils/login";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRecoilState } from "recoil";
 import alert from "atoms/alert";
-// import Alert from "components/shared/Alert";
-import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { resetPassword, validateJWT } from "requests/auth";
+// import Alert from "components/shared/Alert";
+import { goHome, isRepeatValid, signUpPasswordValid } from "utils/login";
+import { Container, FormElements, FormElement, H2 } from "./shared";
+import { Form, Button, FormLabel } from "react-bootstrap";
+import { CheckCircleIcon } from "@heroicons/react/20/solid";
+import styled from "styled-components";
+
+const GreenCheck = styled(CheckCircleIcon)`
+  color: green;
+  width: 20px;
+  padding-left: 5px;
+`;
+
+const GrayCheck = styled(CheckCircleIcon)`
+  color: gray;
+  width: 20px;
+  padding-left: 5px;
+`;
+const Label = styled(FormLabel)`
+  color: white;
+  margin: 0;
+`;
 
 function ResetPassword() {
   const [token, setToken] = useState("");
+  const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
   const [tokenExpired, setTokenExpired] = useState(false);
+
+  const [formPassword, setFormPassword] = useState("");
+  const [formRepeatPassword, setFormRepeatPassword] = useState("");
+
   const [alerta, setAlert] = useRecoilState(alert);
 
   useEffect(() => {
     const validateToken = async () => {
-      // TODO: Replacer with useUrlParams hook
       const queryString = window.location.search;
-
       const urlParams = new URLSearchParams(queryString);
-
       const recoveryToken = urlParams.get("recovery") || "";
-      const res = await validateJWT(recoveryToken);
-      if (res?.success) {
+      const data = await validateJWT(recoveryToken);
+
+      if (data?.success && data.email) {
         setToken(recoveryToken);
+        setEmail(data.email);
       } else {
         setTokenExpired(true);
       }
@@ -30,9 +53,6 @@ function ResetPassword() {
 
     validateToken();
   }, []);
-
-  const [formPassword, setFormPassword] = useState("");
-  const [formRepeatPassword, setFormRepeatPassword] = useState("");
 
   const handleFormPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     const password = e.currentTarget.value;
@@ -43,42 +63,32 @@ function ResetPassword() {
     const password = e.currentTarget.value;
     setFormRepeatPassword(password);
   };
+
   const clearMessage = () => {
     setAlert({ display: false, variant: "success", message: "" });
-  };
-
-  const formSuccess = () => {
-    setSuccess(true);
-    setFormRepeatPassword("");
-    setFormPassword("");
   };
 
   const handleSubmit = useCallback(
     async (event: React.SyntheticEvent) => {
       event.preventDefault();
 
-      const payload = {
+      const res = await resetPassword({
         recoveryToken: token,
         password: formPassword,
-      };
-
-      const res = await resetPassword(payload);
+      });
 
       if (res?.success) {
-        // Place Notification of success, prompt user to log in
         setAlert({
           display: true,
           variant: "success",
-          message: `Password reset successful for ${
-            res?.email || "user"
-          }. Please log in.`,
+          message: `New password for ${res.email} set. Please log in.`,
         });
-        formSuccess();
+        setSuccess(true);
       } else {
         setAlert({
           display: true,
           variant: "error",
-          message: `There was an error reseting password`,
+          message: res?.msg || "Error setting new password",
         });
       }
     },
@@ -93,108 +103,82 @@ function ResetPassword() {
   );
 
   if (tokenExpired) {
-    return (
-      <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-        Link expirado
-      </h2>
-    );
+    return <H2>Link expired</H2>;
   }
-
   return (
-    <>
+    <Container>
       {/* {alerta.display && <Alert />} */}
-      <div className="flex min-h-full flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div className="w-full max-w-sm space-y-10">
-          <div>
-            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Reset Password
-            </h2>
-          </div>
+      <div>
+        <div>
+          <H2>
+            {success
+              ? "Password set. Please Log in."
+              : "Set up your new password"}
+          </H2>
+          <h6 className="text-center text-gray-900">{email}</h6>
+
           {success ? (
             <div>
-              <button
-                onClick={goHome}
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
+              <Button onClick={goHome} variant="secondary">
                 Back
-              </button>
+              </Button>
             </div>
           ) : (
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-6"
-              action="#"
-              method="POST"
-            >
-              <>
-                <div>
-                  <label htmlFor="password" className="sr-only">
-                    Contraseña
-                  </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    onFocus={clearMessage}
-                    value={formPassword}
-                    onChange={handleFormPassword}
-                    autoComplete="current-password"
-                    required
-                    className="relative block w-full rounded-b-md border-0 pl-3 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    placeholder="Contraseña"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="repeat-password" className="sr-only">
-                    Repite Contraseña
-                  </label>
-                  <input
-                    id="repeat-password"
-                    name="repeat-password"
-                    type="password"
-                    onFocus={clearMessage}
-                    value={formRepeatPassword}
-                    onChange={handleFormRepeatPassword}
-                    required
-                    className="relative block w-full rounded-b-md border-0 pl-3 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    placeholder="Repite Contraseña"
-                  />
-                </div>
-                <div className="flex gap-x-2">
-                  <label>Contraseña </label>
-                  <CheckCircleIcon
-                    className={`h-5 w-5 text-${
-                      passwordOk ? "green" : "red"
-                    }-400`}
-                  />
-                </div>
-                <div className=" flex gap-x-2">
-                  <label>Confirmación idéntica </label>
-                  <CheckCircleIcon
-                    className={`h-5 w-5 text-${repeatOk ? "green" : "red"}-400`}
-                  />
-                </div>
-                <label className="block text-sm font-small leading-6 text-gray-900">
-                  Tu contraseña debe tener al menos 8 caracteres que incluyan al
-                  menos una letra y un número.
-                </label>
-              </>
-
+            <Form onSubmit={handleSubmit} action="#" method="POST">
               <div>
-                <button
+                <FormElements>
+                  <FormElement>
+                    <Label htmlFor="password" className="sr-only">
+                      Password
+                      {passwordOk ? <GreenCheck /> : <GrayCheck />}
+                    </Label>
+                    <Form.Control
+                      id="password"
+                      name="password"
+                      type="password"
+                      onFocus={clearMessage}
+                      value={formPassword}
+                      onChange={handleFormPassword}
+                      autoComplete="current-password"
+                      required
+                      placeholder="Contraseña"
+                    />
+                  </FormElement>
+
+                  <FormElement>
+                    <Label htmlFor="repeat-password" className="sr-only">
+                      Repeat Password
+                      {repeatOk ? <GreenCheck /> : <GrayCheck />}
+                    </Label>
+                    <Form.Control
+                      id="repeat-password"
+                      name="repeat-password"
+                      type="password"
+                      onFocus={clearMessage}
+                      value={formRepeatPassword}
+                      onChange={handleFormRepeatPassword}
+                      required
+                      placeholder="Repite Contraseña"
+                    />
+                  </FormElement>
+                  <Label>
+                    Your password should have at least 8 characters that include
+                    at least one letter and one number.
+                  </Label>
+                </FormElements>
+                <Button
                   type="submit"
-                  disabled={!formValid}
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  disabled={!Boolean(token) || !formValid}
+                  variant="primary"
                 >
-                  Reestablecer contraseña
-                </button>
+                  Confirm
+                </Button>
               </div>
-            </form>
+            </Form>
           )}
         </div>
       </div>
-    </>
+    </Container>
   );
 }
 
