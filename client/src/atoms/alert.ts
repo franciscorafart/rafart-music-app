@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 import { AlertType } from "utils/types";
 
-const defaultAlert: AlertType = {
+export const defaultAlert: AlertType = {
   display: false,
   variant: "success",
   message: "Success!",

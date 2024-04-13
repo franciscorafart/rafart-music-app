@@ -2,12 +2,12 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRecoilState } from "recoil";
 import alert from "atoms/alert";
 import { resetPassword, validateJWT } from "requests/auth";
-// import Alert from "components/shared/Alert";
 import { goHome, isRepeatValid, signUpPasswordValid } from "utils/login";
 import { Container, FormElements, FormElement, H2 } from "./shared";
 import { Form, Button, FormLabel } from "react-bootstrap";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import styled from "styled-components";
+import Alerta from "shared/Alerta";
 
 const GreenCheck = styled(CheckCircleIcon)`
   color: green;
@@ -87,7 +87,7 @@ function ResetPassword() {
       } else {
         setAlert({
           display: true,
-          variant: "error",
+          variant: "danger",
           message: res?.msg || "Error setting new password",
         });
       }
@@ -107,7 +107,7 @@ function ResetPassword() {
   }
   return (
     <Container>
-      {/* {alerta.display && <Alert />} */}
+      {alerta.display && <Alerta />}
       <div>
         <div>
           <H2>

@@ -3,11 +3,9 @@ import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import StripeModal from "StripeModal";
-import Button from "react-bootstrap/Button";
 import styled from "styled-components";
 
 import { ScreenSizeType } from "shared/types";
-import { useNavigate } from "react-router-dom";
 import Login from "Auth/Login";
 // import MastodonFeed from 'Mastodon';
 

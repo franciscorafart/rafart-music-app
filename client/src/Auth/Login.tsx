@@ -77,7 +77,7 @@ export default function Login() {
       } else {
         setAlert({
           display: true,
-          variant: "error",
+          variant: "danger",
           message:
             data?.msg ||
             "No se pudo enviar el email de recuperación de contraseña",
@@ -95,7 +95,7 @@ export default function Login() {
       } else {
         setAlert({
           display: true,
-          variant: "error",
+          variant: "danger",
           message: data?.msg || "Error creating user. Please try again.",
         });
       }
@@ -119,7 +119,7 @@ export default function Login() {
       } else {
         setAlert({
           display: true,
-          variant: "error",
+          variant: "danger",
           message: data?.msg || "Log in error",
         });
       }

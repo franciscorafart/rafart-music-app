@@ -12,6 +12,6 @@ export type UserType = {
 
 export type AlertType = {
   display: boolean;
-  variant: "success" | "error" | "warning";
+  variant: "success" | "danger" | "warning";
   message: string;
 };

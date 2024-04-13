@@ -1,12 +1,12 @@
 import { Nav, Navbar } from "react-bootstrap";
 import logoImage from "assets/logo.png";
 import account, { defaultAccount } from "atoms/account";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { Roles } from "utils/enums";
 import { logout } from "requests/auth";
 import { useNavigate } from "react-router-dom";
 import { useMemo } from "react";
-// import { useEffect } from "react";
+import alert from "atoms/alert";
 
 const fanMenu = [{ title: "Fans", linkString: "/fans" }];
 // TODO: Add admin and collaborator Menu
@@ -14,6 +14,7 @@ const fanMenu = [{ title: "Fans", linkString: "/fans" }];
 const Menu = () => {
   const [userAccount, setUserAccount] = useRecoilState(account);
   const navigate = useNavigate();
+  const setAlert = useSetRecoilState(alert);
   const userExists = useMemo(
     () => userAccount && userAccount.role >= Roles.Fan,
     [userAccount]
@@ -23,6 +24,7 @@ const Menu = () => {
   const onLogout = async () => {
     await logout();
     setUserAccount(defaultAccount);
+    setAlert({ display: true, variant: "success", message: "Logged out" });
     navigate("/");
   };
 

@@ -5,6 +5,7 @@ import { getAuthUser } from "requests/auth";
 import { Roles } from "utils/enums";
 import { useNavigate } from "react-router-dom";
 import userRoute from "atoms/userRoute";
+import Alerta from "shared/Alerta";
 
 function MainLayout({ children }: { children: ReactNode }) {
   const setUserAccount = useSetRecoilState(accountInState);
@@ -37,7 +38,12 @@ function MainLayout({ children }: { children: ReactNode }) {
     getUser();
   }, []);
 
-  return <div className="min-h-full">{children}</div>;
+  return (
+    <div className="min-h-full">
+      <Alerta />
+      {children}
+    </div>
+  );
 }
 
 export default MainLayout;
